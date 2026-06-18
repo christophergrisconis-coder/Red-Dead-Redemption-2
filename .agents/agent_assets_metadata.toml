@@ -1,8 +1,25 @@
 uploads = []
-outputs = []
 
 [[generated]]
 id = "3YCVmfx19U7-y5dzOL28w"
 uri = "file://artifacts/mobile/assets/images/icon.png"
 type = "image"
 title = "generated_image"
+
+[[generated]]
+id = "21NTyRr2bcbWCTUe0bPHa"
+uri = "file://artifacts/rdr2-video/public/images/map_texture.png"
+type = "image"
+title = "vintage map texture"
+
+[[generated]]
+id = "OvuBhYU08zrIo4nf53i9y"
+uri = "file://artifacts/rdr2-video/public/images/cowboy.png"
+type = "image"
+title = "cowboy silhouette"
+
+[[outputs]]
+id = "hCfBMoOYDjBhsBSdi-IMn"
+uri = "file://artifacts/rdr2-video/public/audio/bg_music.mp3"
+type = "audio"
+title = "western cinematic background music"
