@@ -6,10 +6,15 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CategoryCard } from '@/components/CategoryCard';
 import { ProgressRing } from '@/components/ProgressRing';
 import { useProgress } from '@/context/ProgressContext';
-import { categories, getCompletionPercent, totalItems } from '@/data/rdr2Data';
+import {
+  categories,
+  getCategoriesBySection,
+  getCompletionPercent,
+  getSectionPercent,
+  SECTIONS,
+  totalItems,
+} from '@/data/rdr2Data';
 import { useColors } from '@/hooks/useColors';
-
-const FEATURED_CATS = ['prologue', 'chapter1', 'chapter2', 'chapter3', 'challenges'];
 
 export default function HomeScreen() {
   const colors = useColors();
@@ -26,15 +31,15 @@ export default function HomeScreen() {
       const p = getCompletionPercent(completedIds, c.id);
       return p > 0 && p < 100;
     })
-    .slice(0, 4);
+    .slice(0, 5);
 
   const handleReset = () => {
     Alert.alert(
       'Reset All Progress',
-      'This will clear all your completed items. Are you sure?',
+      'This will clear ALL completed items across every category. This cannot be undone.',
       [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Reset', style: 'destructive', onPress: resetAll },
+        { text: 'Reset Everything', style: 'destructive', onPress: resetAll },
       ]
     );
   };
@@ -45,20 +50,20 @@ export default function HomeScreen() {
       contentContainerStyle={[styles.content, { paddingTop: topInset + 16, paddingBottom: bottomInset + 100 }]}
       showsVerticalScrollIndicator={false}
     >
-      {/* Hero Header */}
+      {/* Hero Card */}
       <View style={[styles.hero, { backgroundColor: colors.card, borderColor: colors.border }]}>
         <View style={styles.heroTop}>
           <View style={styles.heroText}>
-            <Text style={[styles.heroTitle, { color: colors.primary }]}>Red Dead Redemption 2</Text>
+            <Text style={[styles.heroGame, { color: colors.primary }]}>Red Dead Redemption 2</Text>
             <Text style={[styles.heroSub, { color: colors.mutedForeground }]}>Interactive Completion Guide</Text>
             <Text style={[styles.heroSub, { color: colors.mutedForeground }]}>PlayStation 5 Edition</Text>
           </View>
-          <ProgressRing percent={percent} size={90} strokeWidth={8} label="complete" />
+          <ProgressRing percent={percent} size={88} strokeWidth={7} label="complete" />
         </View>
 
         <View style={[styles.statRow, { borderTopColor: colors.border }]}>
           <View style={styles.stat}>
-            <Text style={[styles.statNum, { color: colors.foreground }]}>{completed}</Text>
+            <Text style={[styles.statNum, { color: colors.primary }]}>{completed}</Text>
             <Text style={[styles.statLabel, { color: colors.mutedForeground }]}>Completed</Text>
           </View>
           <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
@@ -95,27 +100,83 @@ export default function HomeScreen() {
       {/* In Progress */}
       {inProgressCats.length > 0 && (
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: colors.foreground }]}>
-            <Feather name="clock" size={14} color={colors.primary} /> {'  In Progress'}
-          </Text>
+          <View style={styles.sectionHeader}>
+            <Feather name="clock" size={13} color={colors.primary} />
+            <Text style={[styles.sectionTitle, { color: colors.foreground }]}>In Progress</Text>
+          </View>
           {inProgressCats.map(cat => (
             <CategoryCard key={cat.id} category={cat} onPress={() => router.push(`/category/${cat.id}`)} />
           ))}
         </View>
       )}
 
-      {/* Story Chapters quick access */}
+      {/* Section overview cards */}
       <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: colors.foreground }]}>
-          <Feather name="book" size={14} color={colors.primary} /> {'  Story Chapters'}
-        </Text>
-        {categories.filter(c => ['prologue','chapter1','chapter2','chapter3','chapter4','chapter5','chapter6','epilogue1','epilogue2'].includes(c.id)).map(cat => (
+        <View style={styles.sectionHeader}>
+          <Feather name="grid" size={13} color={colors.primary} />
+          <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Browse by Category</Text>
+        </View>
+        <View style={styles.sectionGrid}>
+          {SECTIONS.map(section => {
+            const pct = getSectionPercent(completedIds, section.key);
+            const cats = getCategoriesBySection(section.key);
+            const totalInSection = cats.reduce((s, c) => s + c.items.length, 0);
+            const doneInSection = cats.reduce(
+              (s, c) => s + c.items.filter(i => completedIds.has(i.id)).length,
+              0
+            );
+            const isComplete = pct === 100;
+
+            return (
+              <Pressable
+                key={section.key}
+                onPress={() => router.push({ pathname: '/(tabs)/guide', params: { section: section.key } })}
+                style={({ pressed }) => [
+                  styles.sectionCard,
+                  {
+                    backgroundColor: colors.card,
+                    borderColor: isComplete ? colors.primary : colors.border,
+                    opacity: pressed ? 0.8 : 1,
+                  },
+                ]}
+              >
+                <View style={[styles.sectionIconWrap, { backgroundColor: isComplete ? colors.primary + '22' : colors.secondary }]}>
+                  <Feather name={section.iconName as any} size={16} color={isComplete ? colors.primary : colors.mutedForeground} />
+                </View>
+                <Text style={[styles.sectionCardTitle, { color: colors.foreground }]} numberOfLines={2}>
+                  {section.label}
+                </Text>
+                <View style={[styles.sectionTrack, { backgroundColor: colors.secondary }]}>
+                  <View style={[styles.sectionFill, { width: `${pct}%` as any, backgroundColor: isComplete ? colors.primary : '#C8922A' }]} />
+                </View>
+                <Text style={[styles.sectionCardStat, { color: isComplete ? colors.primary : colors.mutedForeground }]}>
+                  {doneInSection}/{totalInSection}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+      </View>
+
+      {/* Recent: Story chapters shortcut */}
+      <View style={styles.section}>
+        <View style={styles.sectionHeader}>
+          <Feather name="book" size={13} color={colors.primary} />
+          <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Main Story</Text>
+          <Pressable onPress={() => router.push('/(tabs)/guide')}>
+            <Text style={[styles.seeAll, { color: colors.primary }]}>See all →</Text>
+          </Pressable>
+        </View>
+        {getCategoriesBySection('MAIN STORY').map(cat => (
           <CategoryCard key={cat.id} category={cat} onPress={() => router.push(`/category/${cat.id}`)} />
         ))}
       </View>
 
-      {/* Reset button */}
-      <Pressable onPress={handleReset} style={[styles.resetBtn, { borderColor: colors.destructive }]}>
+      {/* Reset */}
+      <Pressable
+        onPress={handleReset}
+        style={[styles.resetBtn, { borderColor: colors.destructive + '66' }]}
+      >
         <Feather name="trash-2" size={14} color={colors.destructive} />
         <Text style={[styles.resetText, { color: colors.destructive }]}>Reset All Progress</Text>
       </Pressable>
@@ -126,11 +187,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { paddingHorizontal: 16, gap: 16 },
-  hero: {
-    borderRadius: 12,
-    borderWidth: 1,
-    overflow: 'hidden',
-  },
+  hero: { borderRadius: 12, borderWidth: 1, overflow: 'hidden' },
   heroTop: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -138,16 +195,9 @@ const styles = StyleSheet.create({
     padding: 16,
     gap: 12,
   },
-  heroText: { flex: 1, gap: 4 },
-  heroTitle: {
-    fontSize: 18,
-    fontFamily: 'Inter_700Bold',
-    lineHeight: 22,
-  },
-  heroSub: {
-    fontSize: 12,
-    fontFamily: 'Inter_400Regular',
-  },
+  heroText: { flex: 1, gap: 3 },
+  heroGame: { fontSize: 17, fontFamily: 'Inter_700Bold', lineHeight: 22 },
+  heroSub: { fontSize: 12, fontFamily: 'Inter_400Regular' },
   statRow: {
     flexDirection: 'row',
     borderTopWidth: StyleSheet.hairlineWidth,
@@ -168,14 +218,41 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   quickBtnText: { fontSize: 15, fontFamily: 'Inter_600SemiBold' },
-  section: { gap: 6 },
+  section: { gap: 8 },
+  sectionHeader: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 2 },
   sectionTitle: {
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: 'Inter_600SemiBold',
-    marginBottom: 4,
     textTransform: 'uppercase',
     letterSpacing: 0.8,
+    flex: 1,
   },
+  seeAll: { fontSize: 13, fontFamily: 'Inter_500Medium' },
+
+  sectionGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  sectionCard: {
+    width: '47%',
+    borderRadius: 10,
+    borderWidth: 1,
+    padding: 12,
+    gap: 8,
+  },
+  sectionIconWrap: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  sectionCardTitle: { fontSize: 13, fontFamily: 'Inter_600SemiBold', lineHeight: 18 },
+  sectionTrack: { height: 3, borderRadius: 2, overflow: 'hidden' },
+  sectionFill: { height: '100%', borderRadius: 2 },
+  sectionCardStat: { fontSize: 11, fontFamily: 'Inter_500Medium' },
+
   resetBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -184,7 +261,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 8,
     borderWidth: 1,
-    marginTop: 8,
+    marginTop: 4,
   },
   resetText: { fontSize: 14, fontFamily: 'Inter_500Medium' },
 });
