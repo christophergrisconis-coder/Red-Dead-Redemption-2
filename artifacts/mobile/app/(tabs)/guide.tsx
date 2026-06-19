@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CategoryCard } from '@/components/CategoryCard';
-import { categories, getCategoriesBySection, getCompletionPercent, getSectionPercent, SECTIONS } from '@/data/rdr2Data';
+import { getCategoriesBySection, getCompletionPercent, getSectionPercent, SECTIONS } from '@/data/rdr2Data';
 import { useColors } from '@/hooks/useColors';
 import { useProgress } from '@/context/ProgressContext';
 
@@ -36,18 +36,44 @@ export default function GuideScreen() {
   ];
 
   const searchLower = search.trim().toLowerCase();
-
   const displaySections = activeSection === ALL_KEY ? SECTIONS : SECTIONS.filter(s => s.key === activeSection);
+  const overallPct = getCompletionPercent(completedIds);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Fixed Header */}
       <View style={[styles.fixedHeader, { paddingTop: topInset + 8, backgroundColor: colors.background, borderBottomColor: colors.border }]}>
-        <Text style={[styles.screenTitle, { color: colors.primary }]}>Completion Guide</Text>
+
+        {/* Title row */}
+        <View style={styles.titleRow}>
+          <View>
+            <Text style={[styles.screenTitle, { color: colors.primary }]}>Completion Guide</Text>
+            <Text style={[styles.screenSub, { color: colors.mutedForeground }]}>
+              All missions, collectibles & challenges
+            </Text>
+          </View>
+          <View style={[styles.overallBadge, { backgroundColor: overallPct === 100 ? colors.primary + '22' : colors.secondary, borderColor: overallPct === 100 ? colors.primary : colors.border }]}>
+            <Text style={[styles.overallPct, { color: overallPct === 100 ? colors.primary : colors.foreground }]}>
+              {overallPct}%
+            </Text>
+            <Text style={[styles.overallLabel, { color: colors.mutedForeground }]}>done</Text>
+          </View>
+        </View>
+
+        {/* Walkthrough shortcut */}
+        <Pressable
+          onPress={() => router.push('/(tabs)/walkthrough')}
+          style={[styles.walkthroughShortcut, { backgroundColor: colors.card, borderColor: colors.goldDim }]}
+        >
+          <Feather name="book-open" size={13} color={colors.gold} />
+          <Text style={[styles.walkthroughShortcutText, { color: colors.gold }]}>
+            Step-by-step walkthroughs (Ch. 4 onwards) →
+          </Text>
+        </Pressable>
 
         {/* Search */}
         <View style={[styles.searchBar, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          <Feather name="search" size={15} color={colors.mutedForeground} />
+          <Feather name="search" size={14} color={colors.mutedForeground} />
           <TextInput
             style={[styles.searchInput, { color: colors.foreground }]}
             placeholder="Search categories..."
@@ -57,7 +83,7 @@ export default function GuideScreen() {
           />
           {search.length > 0 && (
             <Pressable onPress={() => setSearch('')}>
-              <Feather name="x" size={15} color={colors.mutedForeground} />
+              <Feather name="x" size={14} color={colors.mutedForeground} />
             </Pressable>
           )}
         </View>
@@ -89,9 +115,19 @@ export default function GuideScreen() {
 
       <ScrollView
         style={styles.list}
-        contentContainerStyle={[styles.listContent, { paddingBottom: bottomInset + 100 }]}
+        contentContainerStyle={[styles.listContent, { paddingBottom: bottomInset + 110 }]}
         showsVerticalScrollIndicator={false}
       >
+        {/* Side quest info banner */}
+        {(activeSection === ALL_KEY || activeSection === 'MAIN STORY') && (
+          <View style={[styles.sideQuestInfo, { backgroundColor: colors.sideQuest + '18', borderColor: colors.sideQuest }]}>
+            <View style={[styles.sideQuestDot, { backgroundColor: colors.sideQuestFg }]} />
+            <Text style={[styles.sideQuestInfoText, { color: colors.sideQuestFg }]}>
+              Missions marked <Text style={{ fontFamily: 'Inter_700Bold' }}>SIDE QUEST</Text> are optional but available during that chapter
+            </Text>
+          </View>
+        )}
+
         {displaySections.map(section => {
           const sectionCats = getCategoriesBySection(section.key).filter(cat =>
             searchLower === '' ||
@@ -106,7 +142,6 @@ export default function GuideScreen() {
 
           return (
             <View key={section.key} style={styles.sectionBlock}>
-              {/* Section Header */}
               <Pressable
                 onPress={() => toggleSection(section.key)}
                 style={({ pressed }) => [
@@ -115,7 +150,7 @@ export default function GuideScreen() {
                 ]}
               >
                 <View style={[styles.sectionIconWrap, { backgroundColor: colors.secondary }]}>
-                  <Feather name={section.iconName as any} size={14} color={colors.primary} />
+                  <Feather name={section.iconName as any} size={13} color={colors.primary} />
                 </View>
                 <View style={styles.sectionHeaderText}>
                   <Text style={[styles.sectionTitle, { color: colors.foreground }]}>{section.label}</Text>
@@ -124,27 +159,25 @@ export default function GuideScreen() {
                   </Text>
                 </View>
                 <View style={styles.sectionRight}>
-                  {/* Mini progress bar */}
                   <View style={[styles.miniTrack, { backgroundColor: colors.secondary }]}>
                     <View
                       style={[
                         styles.miniFill,
                         {
                           width: `${sectionPct}%` as any,
-                          backgroundColor: sectionPct === 100 ? colors.primary : '#C8922A',
+                          backgroundColor: sectionPct === 100 ? colors.primary : colors.gold,
                         },
                       ]}
                     />
                   </View>
                   <Feather
                     name={isCollapsed ? 'chevron-down' : 'chevron-up'}
-                    size={16}
+                    size={15}
                     color={colors.mutedForeground}
                   />
                 </View>
               </Pressable>
 
-              {/* Category cards */}
               {!isCollapsed && (
                 <View style={styles.sectionCards}>
                   {sectionCats.map(cat => (
@@ -160,7 +193,6 @@ export default function GuideScreen() {
           );
         })}
 
-        {/* Empty state */}
         {displaySections.every(s => {
           const cats = getCategoriesBySection(s.key).filter(c =>
             searchLower === '' || c.title.toLowerCase().includes(searchLower)
@@ -185,34 +217,93 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     gap: 10,
   },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   screenTitle: {
-    fontSize: 22,
+    fontSize: 21,
     fontFamily: 'Inter_700Bold',
     textTransform: 'uppercase',
     letterSpacing: 1.5,
+  },
+  screenSub: {
+    fontSize: 11,
+    fontFamily: 'Inter_400Regular',
+    marginTop: 1,
+  },
+  overallBadge: {
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  overallPct: {
+    fontSize: 18,
+    fontFamily: 'Inter_700Bold',
+  },
+  overallLabel: {
+    fontSize: 9,
+    fontFamily: 'Inter_400Regular',
+    letterSpacing: 0.5,
+  },
+  walkthroughShortcut: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 9,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  walkthroughShortcutText: {
+    fontSize: 12,
+    fontFamily: 'Inter_500Medium',
   },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
     paddingHorizontal: 12,
-    paddingVertical: 10,
+    paddingVertical: 9,
     borderRadius: 8,
     borderWidth: 1,
   },
   searchInput: { flex: 1, fontSize: 14, fontFamily: 'Inter_400Regular' },
   filterRow: { flexDirection: 'row', gap: 8, paddingVertical: 2 },
   filterTab: {
-    paddingHorizontal: 14,
+    paddingHorizontal: 13,
     paddingVertical: 6,
     borderRadius: 20,
     borderWidth: 1,
   },
   filterTabText: { fontSize: 12, fontFamily: 'Inter_500Medium' },
   list: { flex: 1 },
-  listContent: { padding: 16, gap: 0 },
-
-  sectionBlock: { marginBottom: 16 },
+  listContent: { padding: 14, gap: 0 },
+  sideQuestInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 12,
+  },
+  sideQuestDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    flexShrink: 0,
+  },
+  sideQuestInfoText: {
+    fontSize: 11,
+    fontFamily: 'Inter_400Regular',
+    flex: 1,
+    lineHeight: 16,
+  },
+  sectionBlock: { marginBottom: 14 },
   sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -229,13 +320,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   sectionHeaderText: { flex: 1, gap: 1 },
-  sectionTitle: { fontSize: 14, fontFamily: 'Inter_700Bold', textTransform: 'uppercase', letterSpacing: 1 },
+  sectionTitle: {
+    fontSize: 13,
+    fontFamily: 'Inter_700Bold',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+  },
   sectionMeta: { fontSize: 11, fontFamily: 'Inter_400Regular' },
   sectionRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   miniTrack: { width: 48, height: 4, borderRadius: 2, overflow: 'hidden' },
   miniFill: { height: '100%', borderRadius: 2 },
   sectionCards: { gap: 0 },
-
   empty: { alignItems: 'center', gap: 12, paddingTop: 60 },
   emptyText: { fontSize: 16, fontFamily: 'Inter_400Regular' },
 });

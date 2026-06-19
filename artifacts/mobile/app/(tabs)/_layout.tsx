@@ -20,6 +20,10 @@ function NativeTabLayout() {
         <Icon sf={{ default: "list.bullet", selected: "list.bullet" }} />
         <Label>Guide</Label>
       </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="walkthrough">
+        <Icon sf={{ default: "book.pages", selected: "book.pages.fill" }} />
+        <Label>Walkthroughs</Label>
+      </NativeTabs.Trigger>
       <NativeTabs.Trigger name="map">
         <Icon sf={{ default: "map", selected: "map.fill" }} />
         <Label>Map</Label>
@@ -47,7 +51,7 @@ function ClassicTabLayout() {
         headerShown: false,
         tabBarStyle: {
           position: "absolute",
-          backgroundColor: isIOS ? "transparent" : colors.background,
+          backgroundColor: isIOS ? "transparent" : colors.card,
           borderTopWidth: 1,
           borderTopColor: colors.border,
           elevation: 0,
@@ -56,18 +60,23 @@ function ClassicTabLayout() {
         tabBarBackground: () =>
           isIOS ? (
             <BlurView
-              intensity={100}
-              tint={isDark ? "dark" : "dark"}
+              intensity={80}
+              tint="dark"
               style={StyleSheet.absoluteFill}
             />
           ) : isWeb ? (
             <View
               style={[
                 StyleSheet.absoluteFill,
-                { backgroundColor: colors.background },
+                { backgroundColor: colors.card },
               ]}
             />
           ) : null,
+        tabBarLabelStyle: {
+          fontSize: 10,
+          fontFamily: 'Inter_500Medium',
+          letterSpacing: 0.3,
+        },
       }}
     >
       <Tabs.Screen
@@ -91,6 +100,18 @@ function ClassicTabLayout() {
               <SymbolView name="list.bullet" tintColor={color} size={22} />
             ) : (
               <Feather name="list" size={22} color={color} />
+            ),
+        }}
+      />
+      <Tabs.Screen
+        name="walkthrough"
+        options={{
+          title: "Walkthrough",
+          tabBarIcon: ({ color }) =>
+            isIOS ? (
+              <SymbolView name="book.pages" tintColor={color} size={22} />
+            ) : (
+              <Feather name="book-open" size={22} color={color} />
             ),
         }}
       />

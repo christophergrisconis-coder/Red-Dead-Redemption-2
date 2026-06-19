@@ -4,6 +4,7 @@ export interface ChecklistItem {
   description?: string;
   location?: string;
   tip?: string;
+  isSideQuest?: boolean;
 }
 
 export interface Category {
@@ -24,6 +25,14 @@ const mk = (
   location?: string,
   tip?: string
 ): ChecklistItem => ({ id, title, description, location, tip });
+
+const mkSQ = (
+  id: string,
+  title: string,
+  description?: string,
+  location?: string,
+  tip?: string
+): ChecklistItem => ({ id, title, description, location, tip, isSideQuest: true });
 
 // ─── SECTIONS ───────────────────────────────────────────────────────────────
 
@@ -145,8 +154,8 @@ export const categories: Category[] = [
       mk('c4_1', 'The Joys of Civilization', 'Dutch and Arthur arrive in the city of Saint Denis', 'Saint Denis', 'Take the time to explore Saint Denis'),
       mk('c4_2', 'Angelo Bronte, A Man of Honor', 'Meet Angelo Bronte and clear grave robbers from his cemetery to secure Jack\'s release', 'Saint Denis / Italian Quarter cemetery', 'Stealth is possible — clear quietly before Bronte checks'),
       mk('c4_3', 'The Gilded Cage', 'Infiltrate the Mayor\'s party in Saint Denis as a guest', 'Saint Denis', 'Wear clean clothes and speak to all NPCs'),
-      mk('c4_4', 'Brothers and Sisters, One and All', 'Help a family in desperate need — time-sensitive, last chance before Chapter 5', 'Near Shady Belle', 'Must complete before the end of Chapter 4 or it is gone forever'),
-      mk('c4_5', 'No, No and Thrice, No', 'Collect Strauss\'s debts from two reluctant debtors near Saint Denis', 'Saint Denis outskirts', 'One debtor cooperates — the other leads to serious trouble'),
+      mkSQ('c4_4', 'Brothers and Sisters, One and All', 'Help a family in desperate need — time-sensitive, last chance before Chapter 5', 'Near Shady Belle', 'Must complete before the end of Chapter 4 or it is gone forever'),
+      mkSQ('c4_5', 'No, No and Thrice, No', 'Collect Strauss\'s debts from two reluctant debtors near Saint Denis', 'Saint Denis outskirts', 'One debtor cooperates — the other leads to serious trouble'),
       mk('c4_6', 'Horsemen, Apocalypses', 'Ride with Rain Falls and Charles to rescue Wapiti warriors being slaughtered by soldiers', 'Wapiti Indian Reservation', 'Stay mounted — the soldiers are numerous and well-armed'),
       mk('c4_7', 'Urban Pleasures', 'Help the gang rob Angelo Bronte\'s Italian crime crew in Saint Denis', 'Saint Denis', 'Use Dead Eye and watch for enemies flanking from alleys'),
       mk('c4_8', 'A Fine Night of Debauchery', 'Infiltrate and con the riverboat poker tournament with Trelawny', 'Riverboat near Saint Denis', 'Follow Trelawny\'s card-counting cues — don\'t improvise'),
@@ -155,8 +164,8 @@ export const categories: Category[] = [
       mk('c4_11', 'American Fathers II', 'Help Eagle Flies and Rain Falls as the conflict with the Army escalates', 'Wapiti Indian Reservation / New Hanover', 'The situation spirals fast — be ready to fight your way out'),
       mk('c4_12', 'Revenge Is a Dish Best Eaten', 'Abduct Angelo Bronte with Dutch and John', 'Saint Denis', 'Major story turning point — follow Dutch\'s lead'),
       mk('c4_13', 'Banking, the Old American Art', 'Rob the Saint Denis bank with the whole gang', 'Saint Denis', 'The big heist — be prepared for an extended firefight and escape'),
-      mk('c4_14', 'Bleeding Love', 'Respond to Mary Linton\'s letter and escort her ailing father to safety', 'Saint Denis', 'Optional — keep honor high for best dialogue outcome'),
-      mk('c4_15', 'The Thin Blue Line', 'Help Trelawny escape from Saint Denis police custody', 'Saint Denis', 'Fast riding and quick thinking required'),
+      mkSQ('c4_14', 'Bleeding Love', 'Respond to Mary Linton\'s letter and escort her ailing father to safety', 'Saint Denis', 'Optional — keep honor high for best dialogue outcome'),
+      mkSQ('c4_15', 'The Thin Blue Line', 'Help Trelawny escape from Saint Denis police custody', 'Saint Denis', 'Fast riding and quick thinking required'),
     ],
   },
   {
@@ -192,13 +201,13 @@ export const categories: Category[] = [
       mk('c6_2', 'Just a Social Call', 'Dutch and Micah confront Cornwall at Annesburg — things go badly', 'Annesburg', 'Watch for the moment things unravel — Dutch is changing'),
       mk('c6_3', 'Do Not Seek Absolution I', 'Aid Eagle Flies in recovering Wapiti horses stolen by the army', 'Wapiti Indian Reservation', 'Stealth approach recommended — avoid alerting the soldiers'),
       mk('c6_4', 'Do Not Seek Absolution II', 'Help Eagle Flies escape the fort with the recovered horses', 'Fort Mercer', 'Fast and loud — be ready to ride hard out of the fort'),
-      mk('c6_5', 'Of Men and Angels I', 'Find Sister Calderón outside her church in Saint Denis and hear her story', 'Saint Denis', 'Peaceful start — listen carefully to the Sister\'s confession'),
-      mk('c6_6', 'Of Men and Angels II', 'Escort Sister Calderón\'s wagon and protect it from Lemoyne Raiders', 'Saint Denis to Lagras', 'Guard both sides of the wagon on the road south'),
-      mk('c6_7', 'The Course of True Love IV', 'Help Penelope Braithwaite and Beau Gray elope despite their feuding families', 'Flatneck Station area', 'Escort the couple safely — the families will pursue'),
-      mk('c6_8', 'The Course of True Love V', 'Ensure Penelope and Beau reach safety and begin their new life together', 'Train station, Lemoyne', 'Final chapter for this storyline — a rare happy ending'),
-      mk('c6_9', 'Money Lending and Other Sins VI', 'Collect overdue debts for Leopold Strauss as Arthur\'s illness worsens', 'Near Annesburg', 'Arthur\'s tuberculosis is visibly taking hold here'),
-      mk('c6_10', 'Money Lending and Other Sins VII', 'Arthur refuses further debt work and throws Strauss out of camp', 'Beaver Hollow', 'Key story moment — Arthur draws his moral line'),
-      mk('c6_11', 'The Delights of Van Horn', 'Arthur wakes up in Van Horn after a wild night with a strange Englishman', 'Van Horn Trading Post', 'Funny and surreal — just follow along'),
+      mkSQ('c6_5', 'Of Men and Angels I', 'Find Sister Calderón outside her church in Saint Denis and hear her story', 'Saint Denis', 'Peaceful start — listen carefully to the Sister\'s confession'),
+      mkSQ('c6_6', 'Of Men and Angels II', 'Escort Sister Calderón\'s wagon and protect it from Lemoyne Raiders', 'Saint Denis to Lagras', 'Guard both sides of the wagon on the road south'),
+      mkSQ('c6_7', 'The Course of True Love IV', 'Help Penelope Braithwaite and Beau Gray elope despite their feuding families', 'Flatneck Station area', 'Escort the couple safely — the families will pursue'),
+      mkSQ('c6_8', 'The Course of True Love V', 'Ensure Penelope and Beau reach safety and begin their new life together', 'Train station, Lemoyne', 'Final chapter for this storyline — a rare happy ending'),
+      mkSQ('c6_9', 'Money Lending and Other Sins VI', 'Collect overdue debts for Leopold Strauss as Arthur\'s illness worsens', 'Near Annesburg', 'Arthur\'s tuberculosis is visibly taking hold here'),
+      mkSQ('c6_10', 'Money Lending and Other Sins VII', 'Arthur refuses further debt work and throws Strauss out of camp', 'Beaver Hollow', 'Key story moment — Arthur draws his moral line'),
+      mkSQ('c6_11', 'The Delights of Van Horn', 'Arthur wakes up in Van Horn after a wild night with a strange Englishman', 'Van Horn Trading Post', 'Funny and surreal — just follow along'),
       mk('c6_12', 'Archeology for Beginners', 'Help Rain Falls locate stolen Native American artifacts taken by the Army', 'Wapiti Indian Reservation', 'Choose peaceful dialogue options for the honor reward'),
       mk('c6_13', 'Honor, Amongst Thieves', 'Help Monroe retrieve a stolen vaccine from an Army wagon for the Wapiti tribe', 'Wapiti Indian Reservation area', 'Recover the vaccine without being detected for the gold medal'),
       mk('c6_14', 'The Fine Art of Conversation', 'Ride with Charles and Rains Fall — a quiet conversation interrupted by violence', 'New Hanover', 'Kill a pursuer\'s horse during the escape for the gold medal'),

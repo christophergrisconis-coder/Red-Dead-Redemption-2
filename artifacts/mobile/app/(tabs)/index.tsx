@@ -50,12 +50,22 @@ export default function HomeScreen() {
       contentContainerStyle={[styles.content, { paddingTop: topInset + 16, paddingBottom: bottomInset + 100 }]}
       showsVerticalScrollIndicator={false}
     >
+      {/* Western header */}
+      <View style={styles.westernHeader}>
+        <View style={[styles.westernRule, { backgroundColor: colors.border }]} />
+        <Text style={[styles.westernStar, { color: colors.goldDim }]}>✦</Text>
+        <View style={[styles.westernRule, { backgroundColor: colors.border }]} />
+      </View>
+      <Text style={[styles.westernQuote, { color: colors.mutedForeground }]}>
+        "Be loyal to what matters."  — Arthur Morgan
+      </Text>
+
       {/* Hero Card */}
       <View style={[styles.hero, { backgroundColor: colors.card, borderColor: colors.border }]}>
         <View style={styles.heroTop}>
           <View style={styles.heroText}>
-            <Text style={[styles.heroGame, { color: colors.primary }]}>Red Dead Redemption 2</Text>
-            <Text style={[styles.heroSub, { color: colors.mutedForeground }]}>Interactive Completion Guide</Text>
+            <Text style={[styles.heroGame, { color: colors.primary }]}>RED DEAD REDEMPTION II</Text>
+            <Text style={[styles.heroSub, { color: colors.foreground }]}>The Outlaw's Complete Guide</Text>
             <Text style={[styles.heroSub, { color: colors.mutedForeground }]}>PlayStation 5 Edition</Text>
           </View>
           <ProgressRing percent={percent} size={88} strokeWidth={7} label="complete" />
@@ -80,19 +90,26 @@ export default function HomeScreen() {
       </View>
 
       {/* Quick links */}
+      <Pressable
+        style={[styles.quickBtnPrimary, { backgroundColor: colors.primary }]}
+        onPress={() => router.push('/(tabs)/guide')}
+      >
+        <Feather name="list" size={18} color={colors.primaryForeground} />
+        <Text style={[styles.quickBtnText, { color: colors.primaryForeground }]}>Completion Guide</Text>
+      </Pressable>
       <View style={styles.quickLinks}>
         <Pressable
-          style={[styles.quickBtn, { backgroundColor: colors.primary }]}
-          onPress={() => router.push('/(tabs)/guide')}
+          style={[styles.quickBtn, { backgroundColor: colors.card, borderColor: colors.goldDim, borderWidth: 1 }]}
+          onPress={() => router.push('/(tabs)/walkthrough')}
         >
-          <Feather name="list" size={18} color={colors.primaryForeground} />
-          <Text style={[styles.quickBtnText, { color: colors.primaryForeground }]}>Full Guide</Text>
+          <Feather name="book-open" size={16} color={colors.gold} />
+          <Text style={[styles.quickBtnText, { color: colors.gold }]}>Walkthroughs</Text>
         </Pressable>
         <Pressable
           style={[styles.quickBtn, { backgroundColor: colors.card, borderColor: colors.border, borderWidth: 1 }]}
           onPress={() => router.push('/(tabs)/map')}
         >
-          <Feather name="map" size={18} color={colors.primary} />
+          <Feather name="map" size={16} color={colors.primary} />
           <Text style={[styles.quickBtnText, { color: colors.primary }]}>World Map</Text>
         </Pressable>
       </View>
@@ -186,7 +203,22 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  content: { paddingHorizontal: 16, gap: 16 },
+  content: { paddingHorizontal: 16, gap: 14 },
+  westernHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: -4,
+  },
+  westernRule: { flex: 1, height: StyleSheet.hairlineWidth },
+  westernStar: { fontSize: 10 },
+  westernQuote: {
+    fontSize: 12,
+    fontFamily: 'Inter_400Regular',
+    textAlign: 'center',
+    fontStyle: 'italic',
+    letterSpacing: 0.3,
+  },
   hero: { borderRadius: 12, borderWidth: 1, overflow: 'hidden' },
   heroTop: {
     flexDirection: 'row',
@@ -195,9 +227,17 @@ const styles = StyleSheet.create({
     padding: 16,
     gap: 12,
   },
-  heroText: { flex: 1, gap: 3 },
-  heroGame: { fontSize: 17, fontFamily: 'Inter_700Bold', lineHeight: 22 },
+  heroText: { flex: 1, gap: 4 },
+  heroGame: { fontSize: 15, fontFamily: 'Inter_700Bold', lineHeight: 20, letterSpacing: 0.8 },
   heroSub: { fontSize: 12, fontFamily: 'Inter_400Regular' },
+  quickBtnPrimary: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 14,
+    borderRadius: 10,
+  },
   statRow: {
     flexDirection: 'row',
     borderTopWidth: StyleSheet.hairlineWidth,

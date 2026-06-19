@@ -8,12 +8,13 @@ import {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { WelcomeScene } from "@/components/WelcomeScene";
 import { ProgressProvider } from "@/context/ProgressContext";
 
 SplashScreen.preventAutoHideAsync();
@@ -39,10 +40,12 @@ export default function RootLayout() {
     Inter_600SemiBold,
     Inter_700Bold,
   });
+  const [showWelcome, setShowWelcome] = useState(false);
 
   useEffect(() => {
     if (fontsLoaded || fontError) {
       SplashScreen.hideAsync();
+      setShowWelcome(true);
     }
   }, [fontsLoaded, fontError]);
 
@@ -53,9 +56,12 @@ export default function RootLayout() {
       <ErrorBoundary>
         <QueryClientProvider client={queryClient}>
           <ProgressProvider>
-            <GestureHandlerRootView>
+            <GestureHandlerRootView style={{ flex: 1 }}>
               <KeyboardProvider>
                 <RootLayoutNav />
+                {showWelcome && (
+                  <WelcomeScene onDismiss={() => setShowWelcome(false)} />
+                )}
               </KeyboardProvider>
             </GestureHandlerRootView>
           </ProgressProvider>

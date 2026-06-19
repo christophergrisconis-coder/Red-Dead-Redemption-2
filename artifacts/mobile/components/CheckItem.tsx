@@ -14,6 +14,7 @@ export function CheckItem({ item, completed, onToggle }: CheckItemProps) {
   const colors = useColors();
   const scale = useRef(new Animated.Value(1)).current;
   const checkOpacity = useRef(new Animated.Value(completed ? 1 : 0)).current;
+  const completionFlash = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     Animated.timing(checkOpacity, {
@@ -25,31 +26,67 @@ export function CheckItem({ item, completed, onToggle }: CheckItemProps) {
 
   const handlePress = () => {
     Animated.sequence([
-      Animated.timing(scale, { toValue: 0.95, duration: 80, useNativeDriver: true }),
-      Animated.timing(scale, { toValue: 1, duration: 80, useNativeDriver: true }),
+      Animated.timing(scale, { toValue: 0.96, duration: 70, useNativeDriver: true }),
+      Animated.timing(scale, { toValue: 1, duration: 120, useNativeDriver: true }),
     ]).start();
+
+    if (!completed) {
+      Animated.sequence([
+        Animated.timing(completionFlash, { toValue: 1, duration: 150, useNativeDriver: true }),
+        Animated.timing(completionFlash, { toValue: 0, duration: 400, useNativeDriver: true }),
+      ]).start();
+    }
+
     onToggle();
   };
 
+  const isSideQuest = item.isSideQuest;
+
   return (
     <Pressable onPress={handlePress} style={({ pressed }) => [pressed && { opacity: 0.75 }]}>
-      <Animated.View style={[styles.container, { borderBottomColor: colors.border, transform: [{ scale }] }]}>
+      <Animated.View
+        style={[
+          styles.container,
+          {
+            borderBottomColor: colors.border,
+            transform: [{ scale }],
+            borderLeftWidth: isSideQuest ? 3 : 0,
+            borderLeftColor: isSideQuest ? colors.sideQuest : 'transparent',
+          },
+        ]}
+      >
+        {/* Completion flash overlay */}
+        <Animated.View
+          style={[
+            StyleSheet.absoluteFill,
+            {
+              backgroundColor: colors.primary,
+              opacity: completionFlash.interpolate({ inputRange: [0, 1], outputRange: [0, 0.06] }),
+            },
+          ]}
+        />
+
         <Pressable
           onPress={handlePress}
           style={[
             styles.checkbox,
             {
-              borderColor: completed ? colors.primary : colors.border,
+              borderColor: completed ? colors.primary : isSideQuest ? colors.sideQuest : colors.border,
               backgroundColor: completed ? colors.primary : 'transparent',
             },
           ]}
         >
           <Animated.View style={{ opacity: checkOpacity }}>
-            <Feather name="check" size={12} color={colors.primaryForeground} />
+            <Feather name="check" size={11} color={colors.primaryForeground} />
           </Animated.View>
         </Pressable>
 
         <View style={styles.content}>
+          {isSideQuest && !completed && (
+            <View style={[styles.sideQuestBadge, { backgroundColor: colors.sideQuest + '28', borderColor: colors.sideQuest }]}>
+              <Text style={[styles.sideQuestText, { color: colors.sideQuestFg }]}>SIDE QUEST</Text>
+            </View>
+          )}
           <Text
             style={[
               styles.title,
@@ -63,7 +100,7 @@ export function CheckItem({ item, completed, onToggle }: CheckItemProps) {
             {item.title}
           </Text>
           {!!item.description && !completed && (
-            <Text style={[styles.description, { color: colors.mutedForeground }]} numberOfLines={1}>
+            <Text style={[styles.description, { color: colors.mutedForeground }]} numberOfLines={2}>
               {item.description}
             </Text>
           )}
@@ -78,7 +115,7 @@ export function CheckItem({ item, completed, onToggle }: CheckItemProps) {
           {!!item.tip && !completed && (
             <View style={styles.tipRow}>
               <Feather name="info" size={10} color={colors.mutedForeground} />
-              <Text style={[styles.tip, { color: colors.mutedForeground }]} numberOfLines={2}>
+              <Text style={[styles.tip, { color: colors.mutedForeground }]} numberOfLines={3}>
                 {' '}{item.tip}
               </Text>
             </View>
@@ -110,7 +147,20 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    gap: 3,
+    gap: 4,
+  },
+  sideQuestBadge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: 4,
+    borderWidth: 1,
+    marginBottom: 2,
+  },
+  sideQuestText: {
+    fontSize: 9,
+    fontFamily: 'Inter_700Bold',
+    letterSpacing: 1.2,
   },
   title: {
     fontSize: 15,
@@ -120,7 +170,7 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 12,
     fontFamily: 'Inter_400Regular',
-    lineHeight: 16,
+    lineHeight: 17,
   },
   locationRow: {
     flexDirection: 'row',
@@ -133,12 +183,12 @@ const styles = StyleSheet.create({
   tipRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginTop: 2,
+    marginTop: 1,
   },
   tip: {
     fontSize: 11,
     fontFamily: 'Inter_400Regular',
     flex: 1,
-    lineHeight: 15,
+    lineHeight: 16,
   },
 });

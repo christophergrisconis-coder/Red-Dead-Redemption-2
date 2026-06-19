@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Haptics from 'expo-haptics';
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { playCompletionSound, playUncompleteSound } from '@/hooks/useCompletionSound';
 
 const STORAGE_KEY = 'rdr2_completed_items_v1';
 
@@ -10,6 +11,7 @@ interface ProgressContextValue {
   isCompleted: (id: string) => boolean;
   resetAll: () => void;
   isLoaded: boolean;
+  lastCompleted: string | null;
 }
 
 const ProgressContext = createContext<ProgressContextValue>({
@@ -18,11 +20,13 @@ const ProgressContext = createContext<ProgressContextValue>({
   isCompleted: () => false,
   resetAll: () => {},
   isLoaded: false,
+  lastCompleted: null,
 });
 
 export function ProgressProvider({ children }: { children: React.ReactNode }) {
   const [completedIds, setCompletedIds] = useState<Set<string>>(new Set());
   const [isLoaded, setIsLoaded] = useState(false);
+  const [lastCompleted, setLastCompleted] = useState<string | null>(null);
 
   useEffect(() => {
     AsyncStorage.getItem(STORAGE_KEY)
@@ -46,9 +50,13 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
       if (next.has(id)) {
         next.delete(id);
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        playUncompleteSound();
+        setLastCompleted(null);
       } else {
         next.add(id);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        playCompletionSound();
+        setLastCompleted(id);
       }
       persist(next);
       return next;
@@ -61,10 +69,11 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
     setCompletedIds(new Set());
     AsyncStorage.removeItem(STORAGE_KEY).catch(() => {});
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+    setLastCompleted(null);
   }, []);
 
   return (
-    <ProgressContext.Provider value={{ completedIds, toggleItem, isCompleted, resetAll, isLoaded }}>
+    <ProgressContext.Provider value={{ completedIds, toggleItem, isCompleted, resetAll, isLoaded, lastCompleted }}>
       {children}
     </ProgressContext.Provider>
   );
