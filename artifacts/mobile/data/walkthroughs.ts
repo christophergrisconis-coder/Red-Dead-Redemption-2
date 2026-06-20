@@ -6,6 +6,8 @@ export interface MissionWalkthrough {
   steps: string[];
   goldTips?: string[];
   honorNote?: string;
+  missables?: string[];
+  honorImpact?: string;
 }
 
 export const walkthroughData: Record<string, MissionWalkthrough> = {
@@ -225,7 +227,226 @@ export const walkthroughData: Record<string, MissionWalkthrough> = {
     goldTips: ['The bribe or distraction approach avoids triggering the full-city pursuit; loud entry works but makes the escape far harder through dense streets.'],
   },
 
-  // ═══════════════════════════════════════════
+  // ─── Chapter 4 Side Quests ─────────────────────────────────────────────────
+
+  c4_sq1: {
+    chapter: 'Chapter 4', chapterKey: 'ch4',
+    title: 'The Smell of the Grease Paint',
+    isSideQuest: true,
+    steps: [
+      'Find Bertram, the tiny strongman, near the Saint Denis circus tent in the north of the city.',
+      'Speak with him -- he needs help finding his missing partner, the circus ringmaster.',
+      'Follow Bertram through Saint Denis to locate the ringmaster at a bar.',
+      'Convince or intimidate the ringmaster to return to the circus.',
+      'Escort them both back to the circus tent to complete the encounter.',
+    ],
+    goldTips: ['Keep the interaction peaceful if possible -- no wanted level means easier completion.'],
+    missables: ['Must be completed before Chapter 6 -- the circus leaves Saint Denis permanently.'],
+    honorImpact: 'Positive honor for helping Bertram.',
+  },
+
+  c4_sq2: {
+    chapter: 'Chapter 4', chapterKey: 'ch4',
+    title: 'Do Not Seek Absolution I',
+    isSideQuest: true,
+    steps: [
+      'Travel to Annesburg in northeastern New Hanover and find Edith Downes -- Thomas Downes\'s widow.',
+      'She is working in the Annesburg brothel, forced into prostitution to survive after her husband\'s death.',
+      'Speak with Edith -- she is hostile and blames Arthur for her husband\'s fate.',
+      'Give her money to help cover her and her son Archie\'s debts. This begins the redemption arc.',
+    ],
+    goldTips: ['This quest is only available if you previously collected the Downes debt in Chapter 2. It is one of the most emotionally significant stranger missions in the game.'],
+    missables: ['Must visit Edith before the end of Chapter 6.'],
+    honorImpact: 'High honor gain -- a key redemption moment for Arthur.',
+  },
+
+  c4_sq3: {
+    chapter: 'Chapter 4', chapterKey: 'ch4',
+    title: 'Do Not Seek Absolution II',
+    isSideQuest: true,
+    steps: [
+      'Return to Annesburg after completing Part I to check on Edith and Archie Downes.',
+      'Find that Edith has used the money to get out of the brothel -- she and Archie are preparing to leave.',
+      'Speak with Edith one final time. She acknowledges Arthur\'s help despite everything.',
+      'Watch Edith and Archie board a train and leave Annesburg for a new life.',
+    ],
+    goldTips: ['This conclusion is only unlocked if you gave Edith money in Part I. One of the most moving moments in the game.'],
+    honorImpact: 'Significant honor gain. Arthur\'s illness makes this especially poignant.',
+  },
+
+  c4_sq4: {
+    chapter: 'Chapter 4', chapterKey: 'ch4',
+    title: 'A Bright Bouncing Boy I',
+    isSideQuest: true,
+    steps: [
+      'Find inventor Marko Dragic at his demonstration tent near the Saint Denis fairground.',
+      'Watch his remote-controlled boat demonstration -- help him prove it works by guiding decoys.',
+      'After the demonstration, Dragic invites you to his lab near Doverhill for the next phase.',
+      'Travel to his laboratory workshop northeast of Saint Denis near Doverhill.',
+    ],
+    goldTips: ['The boat demonstration requires moving decoy boats to distract the military observers -- follow Dragic\'s instructions precisely.'],
+    missables: ['Must complete before end of Chapter 6.'],
+    honorImpact: 'Neutral.',
+  },
+
+  c4_sq5: {
+    chapter: 'Chapter 4', chapterKey: 'ch4',
+    title: 'A Bright Bouncing Boy II',
+    isSideQuest: true,
+    steps: [
+      'Return to Marko Dragic\'s lab near Doverhill after completing Part I.',
+      'Help Dragic assemble and activate his electric robot creation in the lab courtyard.',
+      'Place the lightning rods and activate the generator during a storm to power the robot.',
+      'Watch the robot come to life -- Dragic\'s triumph. Return to the lab days later to find the tragic aftermath.',
+      'Explore the lab -- Dragic has been killed. Find the robot in the forest nearby, sitting peacefully.',
+      'Loot Dragic\'s body for the Electric Lantern -- a unique collectible item.',
+    ],
+    goldTips: ['The Electric Lantern found on Dragic\'s body is a unique inventory item. The robot in the forest is one of the most memorable Easter eggs in the game.'],
+    missables: ['The Electric Lantern is missable if you do not loot Dragic\'s body.'],
+    honorImpact: 'Neutral -- sad conclusion to a memorable stranger quest.',
+  },
+
+  c4_sq6: {
+    chapter: 'Chapter 4', chapterKey: 'ch4',
+    title: 'Idealism and Pragmatism for Beginners I',
+    isSideQuest: true,
+    steps: [
+      'Find the mayor\'s assistant, Lemieux, in Saint Denis -- he approaches Arthur about helping a political campaign.',
+      'Help Lemieux deal with rival political supporters by intimidating or confronting them.',
+      'Complete the task and return to Lemieux for payment.',
+    ],
+    goldTips: ['This is a 3-part stranger chain. Complete all 3 for the full reward.'],
+    honorImpact: 'Slight honor loss for intimidation tactics.',
+  },
+
+  c4_sq7: {
+    chapter: 'Chapter 4', chapterKey: 'ch4',
+    title: 'Idealism and Pragmatism for Beginners II',
+    isSideQuest: true,
+    steps: [
+      'Return to Lemieux in Saint Denis for the second political errand.',
+      'Deal with a more aggressive group of political rivals -- this time violence may be unavoidable.',
+      'Complete the confrontation and report back to Lemieux.',
+    ],
+    honorImpact: 'Slight honor loss.',
+  },
+
+  c4_sq8: {
+    chapter: 'Chapter 4', chapterKey: 'ch4',
+    title: 'Idealism and Pragmatism for Beginners III',
+    isSideQuest: true,
+    steps: [
+      'Return to Lemieux for the final job in the chain.',
+      'The final task involves eliminating a key rival permanently -- a morally darker errand.',
+      'Complete the task for a final cash payment from Lemieux.',
+    ],
+    goldTips: ['The payout across all 3 parts is significant. The jobs escalate from intimidation to assassination.'],
+    honorImpact: 'Honor loss for completing the final task.',
+  },
+
+  c4_sq9: {
+    chapter: 'Chapter 4', chapterKey: 'ch4',
+    title: 'The Mercies of Knowledge',
+    isSideQuest: true,
+    steps: [
+      'Find Dr. Joseph Hadley in the wilderness -- he is a traveling scientist studying "human resilience."',
+      'Speak with him and agree to let him conduct a harmless experiment on Arthur.',
+      'Follow Dr. Hadley\'s experiment -- it involves a mild electric shock device.',
+      'React to the experiment and collect payment from the amused but honest doctor.',
+    ],
+    goldTips: ['A short and humorous stranger quest. Easy money and a memorable interaction. Dr. Hadley can be found at multiple locations in New Hanover.'],
+    honorImpact: 'Neutral.',
+  },
+
+  c4_sq10: {
+    chapter: 'Chapter 4', chapterKey: 'ch4',
+    title: 'The Iniquities of History I',
+    isSideQuest: true,
+    steps: [
+      'Find the historical society researcher near Flatneck Station or in the Saint Denis area.',
+      'He wants help locating a specific historical artifact or site -- follow his directions.',
+      'Help him find or authenticate the artifact and receive payment.',
+    ],
+    goldTips: ['A 2-part chain. The second part unlocks after returning a day or two later.'],
+    honorImpact: 'Neutral.',
+  },
+
+  c4_sq11: {
+    chapter: 'Chapter 4', chapterKey: 'ch4',
+    title: 'The Iniquities of History II',
+    isSideQuest: true,
+    steps: [
+      'Return to the historical society researcher after completing Part I.',
+      'He has discovered his first artifact was a fake -- he needs help tracking down the forger.',
+      'Confront the forger and resolve the situation -- through intimidation or peaceful means.',
+      'Return to the researcher for the final payment.',
+    ],
+    honorImpact: 'Positive if resolved peacefully, slight loss if violent.',
+  },
+
+  c4_sq12: {
+    chapter: 'Chapter 4', chapterKey: 'ch4',
+    title: 'The Veteran I',
+    isSideQuest: true,
+    steps: [
+      'Find Hamish Sinclair, a one-legged Civil War veteran, fishing at Ambarino near Cattail Pond.',
+      'Speak with him -- he is friendly and invites Arthur to fish with him.',
+      'Fish with Hamish at the pond. He tells stories of the war and his life after it.',
+      'This begins a multi-chapter friendship with Hamish that spans the rest of the game.',
+    ],
+    goldTips: ['Hamish Sinclair\'s quest chain is one of the most beloved in the game -- spanning 5 meetings across multiple chapters. Do not skip it.'],
+    missables: ['Must meet Hamish before Chapter 6 ends to complete the full chain.'],
+    honorImpact: 'Positive honor for spending time with Hamish.',
+  },
+
+  c4_sq13: {
+    chapter: 'Chapter 4', chapterKey: 'ch4',
+    title: 'Duchesses and Other Animals',
+    isSideQuest: true,
+    steps: [
+      'Find Miss Hobbs\'s advertisement posted in Saint Denis or Valentine -- she is collecting rare animal parts.',
+      'Visit Miss Hobbs at her home in Saint Denis -- she commissions you to hunt specific rare birds and animals.',
+      'Hunt the requested animals: the Roseate Spoonbill, the Snowy Egret, and the Little Heron.',
+      'Return the carcasses or feathers to Miss Hobbs for payment after each hunt.',
+      'Repeat visits unlock new hunting targets including the Warbler and Woodpecker species.',
+    ],
+    goldTips: ['Miss Hobbs pays very well for rare bird parts. The Snowy Egret is found in the Flat Iron Lake bayou area. Use a Varmint Rifle with Small Game Arrows for clean kills.'],
+    missables: ['Must complete before Chapter 6 ends. Miss Hobbs leaves Saint Denis permanently after the story progresses.'],
+    honorImpact: 'Neutral -- hunting quest chain.',
+  },
+
+  c4_sq14: {
+    chapter: 'Chapter 4', chapterKey: 'ch4',
+    title: 'Of Men and Angels I',
+    isSideQuest: true,
+    steps: [
+      'Find the nun Sister Calderón near the Saint Denis train station -- she is ministering to the sick and poor.',
+      'Speak with her -- she asks for a donation to fund her medical mission among the poor of Saint Denis.',
+      'Donate money to Sister Calderón. She thanks you and shares her faith.',
+      'This begins a multi-encounter stranger chain that follows Arthur\'s personal journey.',
+    ],
+    goldTips: ['Sister Calderón appears multiple times throughout Chapters 4-6. Each encounter is brief but emotionally significant -- especially as Arthur\'s illness progresses.'],
+    missables: ['Must donate on first meeting to continue the chain.'],
+    honorImpact: 'Positive honor for donating.',
+  },
+
+  c4_sq15: {
+    chapter: 'Chapter 4', chapterKey: 'ch4',
+    title: 'The Noblest of Men, and a Woman — Billy Midnight',
+    isSideQuest: true,
+    steps: [
+      'After getting the photograph from journalist Theodore Levin in Valentine (must start main quest chain), track down Billy Midnight.',
+      'Billy Midnight is a passenger on a train -- board any train and find him in the rear compartment.',
+      'Confront Billy Midnight. He is a nervous, trembling man -- very different from his legend.',
+      'He flees to the roof of the moving train. Follow him and engage in a duel on the train roof.',
+      'Win the duel and loot Midnight\'s Pistol -- a unique semi-automatic pistol -- from his body.',
+    ],
+    goldTips: ['This is one of the most cinematic duels in the game -- fighting on a moving train roof. Pull your gun at the last possible moment for the gold medal duel time.'],
+    missables: ['Midnight\'s Pistol is missable if you do not loot his body immediately after the duel -- it disappears if you leave the train without picking it up.'],
+    honorImpact: 'Neutral.',
+  },
+
+    // ═══════════════════════════════════════════
   //  CHAPTER 5
   // ═══════════════════════════════════════════
 
