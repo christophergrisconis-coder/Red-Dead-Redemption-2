@@ -15,6 +15,7 @@ const SCENE_DURATIONS = {
   intro: 3000,
   title: 5000,
   fastCuts: 8000,
+  showcase: 8000,
   landscape: 6000,
   guide: 4000,
   outro: 4000,
@@ -260,6 +261,185 @@ function FastCutsScene() {
   );
 }
 
+// Three phone mockups showing the actual app UI
+const APP_SCREENS = [
+  {
+    img: '/rdr2-video/images/app_welcome.jpg',
+    label: 'Complete Walkthrough',
+    sub: 'All Chapters · Gold Tips',
+    delay: 0,
+    fromX: '-120%',
+    rotate: -8,
+  },
+  {
+    img: '/rdr2-video/images/app_all_screens.jpg',
+    label: 'Every Collectible',
+    sub: '16 Animals · 24 Gold Bars · 144 Cards',
+    delay: 0.4,
+    fromX: '0%',
+    rotate: 0,
+  },
+  {
+    img: '/rdr2-video/images/app_screen1.jpg',
+    label: 'Interactive Map',
+    sub: 'Draw with Apple Pencil Pro',
+    delay: 0.8,
+    fromX: '120%',
+    rotate: 8,
+  },
+];
+
+function AppShowcaseScene() {
+  const [phase, setPhase] = useState(0);
+
+  useEffect(() => {
+    const timers = [
+      setTimeout(() => setPhase(1), 300),
+      setTimeout(() => setPhase(2), 5500),
+    ];
+    return () => timers.forEach(t => clearTimeout(t));
+  }, []);
+
+  return (
+    <motion.div
+      className="absolute inset-0 bg-[#0d0a08] flex flex-col items-center justify-center overflow-hidden"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0, filter: 'blur(8px)' }}
+      transition={{ duration: 0.6 }}
+    >
+      {/* Subtle vignette bg */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: 'radial-gradient(ellipse at 50% 60%, rgba(201,162,39,0.06) 0%, transparent 70%)',
+        }}
+      />
+
+      {/* Top label */}
+      <motion.p
+        className="text-[1.4vw] tracking-[0.4em] text-[#c9a227] uppercase mb-[3vh]"
+        style={{ fontFamily: "'Cinzel', serif" }}
+        initial={{ opacity: 0, y: -16 }}
+        animate={phase >= 1 ? { opacity: 1, y: 0 } : { opacity: 0, y: -16 }}
+        transition={{ duration: 0.8 }}
+      >
+        See It In Action
+      </motion.p>
+
+      {/* Three phones */}
+      <div className="flex items-end justify-center gap-[3vw]">
+        {APP_SCREENS.map((screen, i) => (
+          <motion.div
+            key={i}
+            className="flex flex-col items-center gap-[1.5vh]"
+            initial={{ opacity: 0, x: screen.fromX, rotate: screen.rotate, y: 40 }}
+            animate={
+              phase >= 1
+                ? { opacity: 1, x: '0%', rotate: i === 1 ? 0 : screen.rotate * 0.3, y: i === 1 ? -12 : 0 }
+                : { opacity: 0, x: screen.fromX, rotate: screen.rotate, y: 40 }
+            }
+            transition={{ duration: 0.9, delay: screen.delay, type: 'spring', stiffness: 120, damping: 18 }}
+          >
+            {/* Phone frame */}
+            <div
+              style={{
+                width: i === 1 ? '14vw' : '11vw',
+                height: i === 1 ? '28vh' : '22vh',
+                background: '#1a1410',
+                borderRadius: '2.5vw',
+                border: `0.2vw solid ${i === 1 ? '#c9a227' : 'rgba(201,162,39,0.3)'}`,
+                boxShadow: i === 1
+                  ? '0 0 40px rgba(201,162,39,0.25), 0 20px 60px rgba(0,0,0,0.8)'
+                  : '0 10px 40px rgba(0,0,0,0.7)',
+                overflow: 'hidden',
+                position: 'relative',
+                flexShrink: 0,
+              }}
+            >
+              {/* Notch */}
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '1vw',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  width: '3vw',
+                  height: '0.5vw',
+                  background: '#0d0a08',
+                  borderRadius: '1vw',
+                  zIndex: 10,
+                }}
+              />
+              {/* Screenshot */}
+              <img
+                src={screen.img}
+                alt={screen.label}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  objectPosition: 'top',
+                }}
+              />
+              {/* Screen sheen */}
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 60%)',
+                  pointerEvents: 'none',
+                }}
+              />
+            </div>
+
+            {/* Label under phone */}
+            <motion.div
+              className="text-center"
+              initial={{ opacity: 0, y: 8 }}
+              animate={phase >= 1 ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
+              transition={{ duration: 0.6, delay: screen.delay + 0.5 }}
+            >
+              <p
+                className="text-[#f0e8d8]"
+                style={{
+                  fontFamily: "'Cinzel', serif",
+                  fontSize: i === 1 ? '1.3vw' : '1vw',
+                  letterSpacing: '0.1em',
+                }}
+              >
+                {screen.label}
+              </p>
+              <p
+                className="text-[#c9a227]"
+                style={{
+                  fontFamily: "'Crimson Text', serif",
+                  fontSize: i === 1 ? '1vw' : '0.85vw',
+                  opacity: 0.8,
+                  marginTop: '0.3vh',
+                }}
+              >
+                {screen.sub}
+              </p>
+            </motion.div>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Bottom tagline — fades in late */}
+      <motion.p
+        className="text-[1.2vw] text-[#f0e8d8]/50 tracking-[0.25em] mt-[3vh]"
+        style={{ fontFamily: "'Crimson Text', serif", fontStyle: 'italic' }}
+        initial={{ opacity: 0 }}
+        animate={phase >= 2 ? { opacity: 1 } : { opacity: 0 }}
+        transition={{ duration: 1.2 }}
+      >
+        "The most complete RDR2 companion ever made"
+      </motion.p>
+    </motion.div>
+  );
+}
+
 function LandscapeScene() {
   const [phase, setPhase] = useState(0);
 
@@ -398,6 +578,7 @@ export function TrailerVideo() {
           {currentSceneKey === 'intro' && <IntroScene key="intro" />}
           {currentSceneKey === 'title' && <TitleScene key="title" />}
           {currentSceneKey === 'fastCuts' && <FastCutsScene key="fastCuts" />}
+          {currentSceneKey === 'showcase' && <AppShowcaseScene key="showcase" />}
           {currentSceneKey === 'landscape' && <LandscapeScene key="landscape" />}
           {currentSceneKey === 'guide' && <GuideScene key="guide" />}
           {currentSceneKey === 'outro' && <OutroScene key="outro" />}
