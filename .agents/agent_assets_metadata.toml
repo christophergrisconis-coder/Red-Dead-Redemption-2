@@ -23,3 +23,15 @@ id = "hCfBMoOYDjBhsBSdi-IMn"
 uri = "file://artifacts/rdr2-video/public/audio/bg_music.mp3"
 type = "audio"
 title = "western cinematic background music"
+
+[[outputs]]
+id = "QCib4OCXzSPA3_9TPiriE"
+uri = "file://screenshots/appstore_all_screens.jpg"
+type = "image"
+title = "App Store Screenshots — All 5 Screens"
+
+[[outputs]]
+id = "TAf7CjK1t9k9NWRq525LU"
+uri = "file://screenshots/screen1_welcome.jpg"
+type = "image"
+title = "Screen 1 — Welcome Screen"
