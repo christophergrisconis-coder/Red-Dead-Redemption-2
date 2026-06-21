@@ -4,6 +4,7 @@ import React, { createContext, useCallback, useContext, useEffect, useState } fr
 import { playCompletionSound, playUncompleteSound } from '@/hooks/useCompletionSound';
 
 const STORAGE_KEY = 'rdr2_completed_items_v1';
+const BACKUP_PREFIX = 'RDR2SAVE:';
 
 interface ProgressContextValue {
   completedIds: Set<string>;
@@ -12,6 +13,8 @@ interface ProgressContextValue {
   resetAll: () => void;
   isLoaded: boolean;
   lastCompleted: string | null;
+  exportCode: () => string;
+  importCode: (code: string) => boolean;
 }
 
 const ProgressContext = createContext<ProgressContextValue>({
@@ -21,6 +24,8 @@ const ProgressContext = createContext<ProgressContextValue>({
   resetAll: () => {},
   isLoaded: false,
   lastCompleted: null,
+  exportCode: () => '',
+  importCode: () => false,
 });
 
 export function ProgressProvider({ children }: { children: React.ReactNode }) {
@@ -72,8 +77,30 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
     setLastCompleted(null);
   }, []);
 
+  const exportCode = useCallback(() => {
+    const ids = Array.from(completedIds);
+    return BACKUP_PREFIX + ids.join(',');
+  }, [completedIds]);
+
+  const importCode = useCallback((code: string): boolean => {
+    try {
+      const trimmed = code.trim();
+      const payload = trimmed.startsWith(BACKUP_PREFIX)
+        ? trimmed.slice(BACKUP_PREFIX.length)
+        : trimmed;
+      const ids = payload.split(',').map(s => s.trim()).filter(Boolean);
+      const next = new Set(ids);
+      setCompletedIds(next);
+      AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(next))).catch(() => {});
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      return true;
+    } catch {
+      return false;
+    }
+  }, []);
+
   return (
-    <ProgressContext.Provider value={{ completedIds, toggleItem, isCompleted, resetAll, isLoaded, lastCompleted }}>
+    <ProgressContext.Provider value={{ completedIds, toggleItem, isCompleted, resetAll, isLoaded, lastCompleted, exportCode, importCode }}>
       {children}
     </ProgressContext.Provider>
   );
