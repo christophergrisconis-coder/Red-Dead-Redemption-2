@@ -59,3 +59,9 @@ id = "V5Z_PqH698MimgFgnlWJf"
 uri = "file://screenshots/cover_image_alt.png"
 type = "image"
 title = "Cover Image — Leather Journal"
+
+[[outputs]]
+id = "cJji8i-HwlDrm5Rf0xRLC"
+uri = "file://artifacts/mobile/rdr2-guide-web.zip"
+type = "unspecified"
+title = "RDR2 Guide — Itch.io Upload (Web)"
