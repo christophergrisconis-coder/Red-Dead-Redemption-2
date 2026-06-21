@@ -13,8 +13,655 @@ export interface MissionWalkthrough {
 export const walkthroughData: Record<string, MissionWalkthrough> = {
 
   // ═══════════════════════════════════════════
-  //  CHAPTER 4
+  //  CHAPTER 1 — COLTER
   // ═══════════════════════════════════════════
+
+  c1_1: {
+    chapter: 'Chapter 1', chapterKey: 'ch1',
+    title: 'Outlaws from the West',
+    steps: [
+      'The game opens in a blizzard at Colter, an abandoned mining town in the Grizzlies. Follow Dutch and the gang inside.',
+      'Listen to the tense situation — the Blackwater job went wrong and the law is closing in.',
+      'Follow Micah outside to investigate the farmhouse across the frozen field.',
+      'Clear the O\'Driscoll threat at the farmhouse — this is the tutorial for combat and cover.',
+      'Return to the Colter cabin with the information and supplies recovered from the farmhouse.',
+    ],
+    goldTips: ['This is the tutorial — take time learning Dead Eye, cover mechanics, and Eagle Eye before anything else; the snowstorm also teaches navigation by sound and landmark.'],
+  },
+
+  c1_2: {
+    chapter: 'Chapter 1', chapterKey: 'ch1',
+    title: 'Enter, Pursued by a Memory',
+    steps: [
+      'Follow Arthur\'s task to find food for the starving gang in the frozen wilderness.',
+      'Head into the snowfield east of Colter and track deer using Eagle Eye on the frozen ground.',
+      'Hunt at least one deer — a clean headshot preserves the meat.',
+      'Skin the deer completely before carrying the meat back; partial skins mean less food.',
+      'Return to Colter and give the meat to Pearson at the cook\'s wagon.',
+      'Speak with Dutch and Hosea about the plan going forward — Blackwater is behind them.',
+    ],
+    goldTips: ['Use Eagle Eye to track prints in the snow; a single well-placed rifle shot is more efficient than chasing a wounded animal through a blizzard; this mission teaches hunting fundamentals.'],
+  },
+
+  c1_3: {
+    chapter: 'Chapter 1', chapterKey: 'ch1',
+    title: 'Old Friends',
+    steps: [
+      'Colm O\'Driscoll\'s men have found the gang at Colter. Grab a weapon and take a defensive position on the ridge above town.',
+      'Use the snow-covered ridgeline as cover — the O\'Driscolls are advancing from the eastern tree line.',
+      'Pick off the advance scouts with the rifle before they reach the cabin cluster.',
+      'When the second wave pushes up the main path, use Dead Eye to thin them out quickly.',
+      'Pursue the fleeing O\'Driscoll leader on horseback across the frozen valley.',
+      'Close the distance and confront him — this exchange sets up a rivalry that runs through the whole game.',
+    ],
+    goldTips: ['Headshot at least three O\'Driscolls from cover for the gold medal; the horseback chase requires a healthy horse — feed it a hay bale before leaving camp.'],
+  },
+
+  c1_4: {
+    chapter: 'Chapter 1', chapterKey: 'ch1',
+    title: 'The Aftermath of Genesis',
+    steps: [
+      'Help Pearson and the gang set up Colter camp properly — complete the requested chores.',
+      'Contribute money and supplies to the camp ledger (Dutch\'s box) to upgrade camp facilities.',
+      'Speak with gang members around camp — these conversations reveal backstory and character.',
+      'Help Davey Callander — his wound from Blackwater is serious and his time is short.',
+      'Assist with the camp\'s immediate supply needs before the gang can consider moving.',
+    ],
+    goldTips: ['Donate generously to the camp ledger early — upgrades to the medical and food supplies unlock faster travel; speak to every gang member in Colter for unique backstory dialogue.'],
+  },
+
+  c1_5: {
+    chapter: 'Chapter 1', chapterKey: 'ch1',
+    title: 'Who the Hell is Leviticus Cornwall?',
+    steps: [
+      'Ride out with Dutch, Bill, and Micah to intercept a Cornwall Kerosene & Tar train near Flatneck Station.',
+      'Take a firing position on the ridge above the railroad tracks and wait for the train to approach.',
+      'When the train slows, jump aboard from horseback — time your approach to the caboose ladder.',
+      'Fight through the train cars toward the money car at the front, using the car walls as cover.',
+      'Crack the safe in the money car and extract the cash.',
+      'Escape as Cornwall\'s private security forces converge — jump from the slowing train and ride hard north.',
+    ],
+    goldTips: ['Board the train from horseback at full gallop — timing the jump is the tricky part; fight forward car by car rather than letting enemies push back at you; this introduces Leviticus Cornwall as the main antagonist.'],
+  },
+
+  c1_6: {
+    chapter: 'Chapter 1', chapterKey: 'ch1',
+    title: 'Eastward Bound',
+    steps: [
+      'The gang breaks camp at Colter — the snow is too deep and the law too close.',
+      'Assist with packing the wagons and loading essential supplies for the journey east.',
+      'Ride with the convoy as it descends from the Grizzlies toward the warmer lowlands.',
+      'Keep the wagon convoy together through the mountain pass — do not ride ahead.',
+      'Arrive at Horseshoe Overlook in New Hanover and help establish the new camp.',
+      'Explore the new camp location and speak to Dutch about what comes next.',
+    ],
+    goldTips: ['The journey from Colter to Horseshoe Overlook is one of the most atmospheric sequences in the game — ride slowly and take it in; the contrast between the frozen mountains and the green valley is striking.'],
+  },
+
+  // ═══════════════════════════════════════════
+  //  CHAPTER 2 — HORSESHOE OVERLOOK
+  // ═══════════════════════════════════════════
+
+  c2_1: {
+    chapter: 'Chapter 2', chapterKey: 'ch2',
+    title: 'Who is Not Without Sin',
+    steps: [
+      'Meet Dutch at the Horseshoe Overlook camp after settling in — he wants to ride.',
+      'Follow Dutch to the nearby river and sit with him as he talks philosophically about the gang and their plans.',
+      'Listen carefully to Dutch\'s vision for what the money will buy — this conversation establishes his character.',
+      'Return to camp with Dutch when the conversation concludes.',
+      'This mission is primarily about Dutch\'s mindset and sets the tone for Chapter 2.',
+    ],
+    goldTips: ['Let all dialogue play out fully — Dutch\'s philosophy here becomes increasingly hollow as the story progresses; understanding his worldview now makes his later behavior more devastating.'],
+  },
+
+  c2_2: {
+    chapter: 'Chapter 2', chapterKey: 'ch2',
+    title: 'A Quiet Time',
+    steps: [
+      'Head to the Valentine saloon with Lenny to blow off steam after the hard road from Colter.',
+      'Buy rounds of drinks at the bar and enjoy the evening — do not draw a weapon.',
+      'When things escalate at the bar, use hand-to-hand fighting only. No guns inside.',
+      'Manage the brawl through multiple rounds without getting knocked out.',
+      'Exit the saloon with Lenny and escape before the Sheriff arrives.',
+      'Ride out of Valentine clean and return to camp.',
+    ],
+    goldTips: ['This is one of the most fun missions in the game — lean into the comedy; win the brawl without being knocked down for gold; the Valentine saloon is now open for gambling and socializing after this.'],
+  },
+
+  c2_3: {
+    chapter: 'Chapter 2', chapterKey: 'ch2',
+    title: 'Paying a Social Call',
+    steps: [
+      'Ride with Micah west to the O\'Driscoll camp at Hanging Dog Ranch.',
+      'Scout the ranch from the treeline above — identify the O\'Driscoll positions before engaging.',
+      'Approach the barn from the east side to avoid the front sentries.',
+      'Clear the barn and the main cabin systematically — use stealth where possible.',
+      'Find the information Micah is looking for inside the main cabin.',
+      'Escape Hanging Dog Ranch as surviving O\'Driscolls respond and ride back to camp.',
+    ],
+    goldTips: ['Approach from the east treeline for the stealth approach; clear guards silently before entering any building; loot the cabin thoroughly — it contains early story clues about the Blackwater job.'],
+  },
+
+  c2_4: {
+    chapter: 'Chapter 2', chapterKey: 'ch2',
+    title: 'Americans at Rest',
+    steps: [
+      'Find Lenny in Valentine who has gotten into serious trouble after the previous night.',
+      'Track Lenny through Valentine using Eagle Eye on his footprints and the locals\' reactions.',
+      'Locate him in an embarrassing situation — handle it with minimum chaos.',
+      'Get Lenny safely out of Valentine before the local law notices either of you.',
+      'Ride back to camp with Lenny and hear his side of the previous evening\'s events.',
+    ],
+    goldTips: ['Keep Lenny\'s identity hidden from the Valentine sheriff; humor and diplomacy over violence in this mission — a wanted level makes extraction much harder.'],
+  },
+
+  c2_5: {
+    chapter: 'Chapter 2', chapterKey: 'ch2',
+    title: 'The First Shall Be Last',
+    steps: [
+      'Ride with Javier to find Sean MacGuire who was captured by bounty hunters after the Blackwater job.',
+      'Track the bounty hunters\' camp south along the Flat Iron Lake shore using Eagle Eye.',
+      'Scout the camp from high ground — Sean is guarded by four or more armed men.',
+      'Start the assault from range with a rifle, taking out the far sentry first.',
+      'Close in and eliminate remaining guards; find Sean tied up in the camp.',
+      'Cut Sean free and escape the area before reinforcements arrive from the nearby town.',
+      'Ride back to Horseshoe Overlook for Sean\'s triumphant return to camp.',
+    ],
+    goldTips: ['Headshot all bounty hunters without being detected during approach for the gold medal; use the high ridge position east of camp for the opening shots; Sean\'s return triggers one of the best camp celebration scenes.'],
+  },
+
+  c2_6: {
+    chapter: 'Chapter 2', chapterKey: 'ch2',
+    title: 'Pouring Forth Oil I',
+    steps: [
+      'Meet Dutch and the crew at the train tracks north of Flatneck Station for the Cornwall oil heist.',
+      'Stop the Cornwall oil train by placing obstructions on the track — use the supplies in the cart.',
+      'When the train stops, board it quickly and neutralize Cornwall\'s security in the first car.',
+      'Uncouple the oil cars from the locomotive to isolate them.',
+      'Take the driver\'s seat of the detached oil cars and drive them to Dutch\'s designated location.',
+    ],
+    goldTips: ['Work fast on the track obstruction — the train approaches quickly; get to the locomotive before the security team recovers; this is the first of four connected oil missions.'],
+  },
+
+  c2_7: {
+    chapter: 'Chapter 2', chapterKey: 'ch2',
+    title: 'Pouring Forth Oil II',
+    steps: [
+      'Return to the oil site following up on Part I — there is still product to move.',
+      'Guard the oil wagon convoy as it moves through the eastern roads toward the buyer.',
+      'Deal with Cornwall\'s private security forces pursuing the convoy.',
+      'Keep the lead wagon intact through multiple ambush points.',
+      'Deliver the oil to the fence contact and collect payment for Dutch.',
+    ],
+    goldTips: ['Ride slightly ahead of the convoy and pre-clear ambush points rather than reacting; the second ambush is larger than the first — use the terrain on the right side of the road for cover.'],
+  },
+
+  c2_8: {
+    chapter: 'Chapter 2', chapterKey: 'ch2',
+    title: 'Pouring Forth Oil III',
+    steps: [
+      'The Cornwall situation requires one more extraction — ride with Bill and Sean.',
+      'Locate the next oil asset at its storage point near Flatneck Station.',
+      'Deal with the security detail before accessing the asset.',
+      'Move the oil using the designated route while avoiding Cornwall\'s response.',
+      'Deliver to the extraction point and report back to Dutch.',
+    ],
+    goldTips: ['Take the back road south of the station to avoid the patrol — they respond quickly if they spot you on the main road.'],
+  },
+
+  c2_9: {
+    chapter: 'Chapter 2', chapterKey: 'ch2',
+    title: 'Pouring Forth Oil IV',
+    steps: [
+      'The final Cornwall oil operation — Dutch leads this one personally.',
+      'Board the moving Cornwall freight train near Annesburg at speed from horseback.',
+      'Fight through the armed car guards toward the target compartment.',
+      'Locate and secure the final asset Cornwall has been moving east.',
+      'Jump from the train as it approaches Annesburg and ride hard before Cornwall\'s people respond.',
+    ],
+    goldTips: ['Board the rear car first and fight forward — boarding the front puts you in a crossfire; use Dead Eye in the narrow car corridors; this ends the Cornwall oil storyline and raises the stakes significantly.'],
+  },
+
+  c2_10: {
+    chapter: 'Chapter 2', chapterKey: 'ch2',
+    title: 'Blessed Are the Meek?',
+    steps: [
+      'Micah has been arrested in Strawberry after the Blackwater job and is awaiting hanging.',
+      'Ride to Strawberry in West Elizabeth and scout the sheriff\'s office location.',
+      'Create a distraction to draw guards away from the jail — knocking over a supply wagon works.',
+      'Enter through the back of the jail while guards are occupied and find Micah\'s cell.',
+      'Break Micah out and retrieve his weapons from the lockbox near the sheriff\'s desk.',
+      'Fight through Strawberry as the alarm is raised — Micah is aggressive and makes the escape louder.',
+      'Ride north out of Strawberry\'s jurisdiction and lose the pursuit in the West Elizabeth forests.',
+    ],
+    goldTips: ['The quiet approach — distract, sneak in, break out — is far cleaner than a full assault; Micah will escalate everything regardless, so get his guns fast and run; complete without being downed for gold.'],
+  },
+
+  c2_11: {
+    chapter: 'Chapter 2', chapterKey: 'ch2',
+    title: 'An American Pastoral Scene',
+    steps: [
+      'Ride with Strauss to collect a debt at Emerald Ranch from a local farmer who borrowed money.',
+      'Meet the debtor — he is struggling but owes a genuine debt.',
+      'Choose how to handle the collection: firm but fair, or aggressive.',
+      'If the debtor cannot pay in full, accept partial payment or establish a new arrangement.',
+      'Return to Strauss with what was collected and hear his cold assessment of the situation.',
+    ],
+    goldTips: ['High honor: accept partial payment or work arrangement; low honor: take everything; this introduces the debt-collection side missions and sets up Arthur\'s later moral crisis about the Strauss arrangement.'],
+    honorNote: 'Being lenient earns honor; being brutal loses it.',
+  },
+
+  c2_12: {
+    chapter: 'Chapter 2', chapterKey: 'ch2',
+    title: 'Exit Pursued by a Bruised Ego',
+    steps: [
+      'Meet Hosea at the train station and help him run an elaborate con on Leviticus Cornwall himself.',
+      'Take your position as Hosea\'s "associate" and play your part in the scheme without breaking character.',
+      'When Cornwall boards the train, maintain the con through a series of escalating complications.',
+      'The con goes sideways — improvise and get Hosea off the train safely.',
+      'Ride hard away from the station before Cornwall\'s private security identifies you.',
+    ],
+    goldTips: ['Stay in character throughout — breaking the script early collapses the con; this is the most Hosea-focused mission in the game and one of the funniest sequences; let all Hosea dialogue play fully.'],
+  },
+
+  c2_13: {
+    chapter: 'Chapter 2', chapterKey: 'ch2',
+    title: 'Magicians for Sport',
+    steps: [
+      'Josiah Trelawny has been captured by bounty hunters operating out of Emerald Ranch.',
+      'Ride to Emerald Ranch and scout the bounty hunter camp near the barn.',
+      'The hunters have split into two groups — one guards Trelawny, one patrols the perimeter.',
+      'Eliminate the patrol group first before approaching Trelawny\'s location.',
+      'Free Trelawny and cover his escape through the ranch back to the road.',
+      'Ride back toward Horseshoe Overlook with Trelawny — he is grateful but evasive about his recent activities.',
+    ],
+    goldTips: ['Take out the perimeter patrol silently before engaging the main group; loot the camp leader for bounty hunter notes — they contain useful information about the area.'],
+  },
+
+  c2_14: {
+    chapter: 'Chapter 2', chapterKey: 'ch2',
+    title: 'The Spines of America',
+    steps: [
+      'Ride with Hosea to the Flat Iron Lake area to run a land grab con on a wealthy local rancher.',
+      'Play your supporting role in Hosea\'s scheme — follow his signals and improvise naturally.',
+      'When the scheme requires physical assistance, help Hosea manage the target.',
+      'Escape with the proceeds when the con completes and the target realizes what happened.',
+      'Ride back to camp with Hosea and listen to his analysis of the mark — he knows every type.',
+    ],
+    goldTips: ['Hosea is the best character in the game for scheming dialogue — let every conversation play; this mission also opens up more of the Flat Iron Lake region for free exploration.'],
+  },
+
+  c2_15: {
+    chapter: 'Chapter 2', chapterKey: 'ch2',
+    title: 'A Strange Kindness',
+    steps: [
+      'The situation at Horseshoe Overlook has become untenable — the law knows the camp location.',
+      'Help break camp: pack the wagons, load supplies, and prepare the convoy.',
+      'Ride with the convoy as it moves south toward Lemoyne.',
+      'Deal with any threats on the road during the convoy move.',
+      'Arrive at Clemens Point on the south shore of Flat Iron Lake and help establish the new camp.',
+      'Speak with Dutch about the next phase of operations in Lemoyne.',
+    ],
+    goldTips: ['This ends Chapter 2 — complete ALL side quests in the Horseshoe Overlook region before triggering this mission; they disappear once the camp moves. Particularly: Money Lending missions, the Noblest of Men introduction, and fishing with Jack.'],
+    missables: ['All Chapter 2 side missions expire when camp moves. Do them before A Strange Kindness.'],
+  },
+
+  // ─── Chapter 2 Side Quests ─────────────────────────────────────────────────
+
+  c2_sq1: {
+    chapter: 'Chapter 2', chapterKey: 'ch2',
+    title: 'Money Lending and Other Sins I',
+    isSideQuest: true,
+    steps: [
+      'Speak to Leopold Strauss at camp and accept the first debt-collection assignment.',
+      'Ride to the debtor\'s location in the Heartlands of New Hanover.',
+      'The debtor is a homesteader who borrowed during hard times — choose your approach.',
+      'Collect partial or full payment depending on your honor and how you handle the conversation.',
+      'Return the funds to Strauss at camp.',
+    ],
+    goldTips: ['Being lenient earns honor; Strauss will judge you coldly either way.'],
+    honorNote: 'Leniency earns honor; aggression loses it.',
+  },
+
+  c2_sq2: {
+    chapter: 'Chapter 2', chapterKey: 'ch2',
+    title: 'Money Lending and Other Sins II',
+    isSideQuest: true,
+    steps: [
+      'Collect the second debt assignment from Strauss.',
+      'Ride to the debtor near Flatneck Station — he owes a larger sum than the first.',
+      'The debtor has a complicated situation — listen to his story before deciding how to proceed.',
+      'Handle the collection and return to Strauss.',
+    ],
+    goldTips: ['This debt has a harder moral edge than the first — the debtor\'s story is genuinely difficult; high honor players who release the debt still satisfy the quest.'],
+    honorNote: 'Releasing the debt earns significant honor.',
+  },
+
+  c2_sq3: {
+    chapter: 'Chapter 2', chapterKey: 'ch2',
+    title: 'Money Lending and Other Sins III',
+    isSideQuest: true,
+    steps: [
+      'Accept the third debt assignment from Strauss.',
+      'This debtor is in the Valentine area and is harder to find — ask locals for information.',
+      'The debtor is armed and prepared for a violent confrontation — approach with caution.',
+      'Resolve the confrontation and return to Strauss.',
+    ],
+    goldTips: ['This one has potential for violence — keep Dead Eye ready; completing all three sets up the later Strauss confrontation in Chapter 6.'],
+    honorImpact: 'Honor impact depends on approach.',
+  },
+
+  c2_sq4: {
+    chapter: 'Chapter 2', chapterKey: 'ch2',
+    title: 'Polite Society, Valentine Style',
+    isSideQuest: true,
+    steps: [
+      'Find Karen, Mary-Beth, and Tilly in the Valentine general store — they have a con running.',
+      'Play your supporting role as the women work their scheme on the Valentine store owner.',
+      'When the scheme requires a distraction, provide it at exactly the right moment.',
+      'Help the women escape with the proceeds when the target catches on.',
+      'Ride back toward camp and hear the women\'s debrief of the operation.',
+    ],
+    goldTips: ['Time your distraction to Karen\'s signal exactly; this is one of the best gang member spotlight missions in the game — the three women are excellent together.'],
+  },
+
+  c2_sq5: {
+    chapter: 'Chapter 2', chapterKey: 'ch2',
+    title: 'A Fisher of Men',
+    isSideQuest: true,
+    steps: [
+      'Find Jack Marston near the Horseshoe Overlook camp — he wants Arthur to take him fishing.',
+      'Take Jack to the nearby river with fishing rods equipped.',
+      'Teach Jack to fish: help him cast, read the water, and wait for a bite.',
+      'When Jack hooks a fish, guide him through the reel-in process without losing it.',
+      'Spend quiet time with Jack on the riverbank — listen to his questions about the gang\'s life.',
+      'Return to camp with the catch. Abigail will be grateful.',
+    ],
+    goldTips: ['One of the most peaceful missions in the game — do not rush it; Jack\'s questions during the fishing are the most honest conversations Arthur has with anyone about the life they\'re living.'],
+    honorNote: 'Spending time with Jack earns positive honor.',
+  },
+
+  c2_sq6: {
+    chapter: 'Chapter 2', chapterKey: 'ch2',
+    title: 'The Noblest of Men, and a Woman — Theodore Levin',
+    isSideQuest: true,
+    steps: [
+      'Find journalist Theodore Levin in the Valentine saloon — he is writing a book about legendary gunfighters.',
+      'Speak to Levin and hear his pitch. He gives Arthur four photographs of gunslingers he needs to interview.',
+      'The four gunslingers are: Billy Midnight, Flaco Hernandez, Emmet Granger, and Black Belle.',
+      'Each gunslinger must be tracked down separately across the map (see individual quest entries).',
+      'This begins a multi-chapter stranger quest chain that runs through Chapters 2-4.',
+    ],
+    goldTips: ['Start this quest immediately in Chapter 2 so you have maximum time to complete all four gunslinger encounters before Chapter 4 ends; each gunslinger drops a unique, irreplaceable weapon.'],
+    missables: ['All four gunslingers and their unique weapons must be found before end of Chapter 6.'],
+  },
+
+  c2_sq7: {
+    chapter: 'Chapter 2', chapterKey: 'ch2',
+    title: 'Further Questions of Female Suffrage',
+    isSideQuest: true,
+    steps: [
+      'Find the suffragette campaigners near the Flatneck Station area handing out pamphlets.',
+      'Speak to the lead campaigner — she asks for Arthur\'s help with a problem.',
+      'A local rancher has been harassing the campaigners and threatening them off the road.',
+      'Confront the rancher and persuade him to stop the harassment — peacefully or otherwise.',
+      'Return to the campaigner and report the resolution.',
+    ],
+    goldTips: ['Peaceful resolution earns honor; this is the first of a multi-chapter encounter chain with the suffragette movement that reflects the changing times in 1899.'],
+    honorNote: 'Peaceful resolution earns honor.',
+  },
+
+  // ═══════════════════════════════════════════
+  //  CHAPTER 3 — CLEMENS POINT
+  // ═══════════════════════════════════════════
+
+  c3_1: {
+    chapter: 'Chapter 3', chapterKey: 'ch3',
+    title: 'The New South',
+    steps: [
+      'Arrive at Clemens Point camp on the south shore of Flat Iron Lake in Lemoyne.',
+      'Help establish camp — place tents, organize supplies, and get the cook fire running.',
+      'Speak to Dutch about the Lemoyne situation: the Gray and Braithwaite families control the region.',
+      'Ride out with Dutch and survey the surrounding area — scout the nearby roads and landmarks.',
+      'Meet a Gray family rider on the road and begin the careful double-dealing Dutch intends.',
+    ],
+    goldTips: ['Explore Clemens Point and the surrounding Lemoyne countryside thoroughly before advancing; the region has unique plants, animals, and collectibles; the dual-family political situation defines Chapter 3.'],
+  },
+
+  c3_2: {
+    chapter: 'Chapter 3', chapterKey: 'ch3',
+    title: 'Advertising, the New American Art I',
+    steps: [
+      'Ride with Hosea to the Braithwaite estate for the first act of his long con against both families.',
+      'Play the role of Hosea\'s business associate and help establish credibility with the Braithwaites.',
+      'Gather intelligence on the Braithwaite operation while appearing cooperative.',
+      'Deliver the first act of the con without breaking character — follow Hosea\'s lead entirely.',
+      'Exit the estate with Hosea and debrief on what you learned about the Braithwaites\' real business.',
+    ],
+    goldTips: ['Do not improvise — follow Hosea\'s script exactly; any deviation alerts the Braithwaites; this begins a two-part con that eventually requires a significant sacrifice from the gang.'],
+  },
+
+  c3_3: {
+    chapter: 'Chapter 3', chapterKey: 'ch3',
+    title: 'Advertising, the New American Art II',
+    steps: [
+      'Return to the Braithwaite estate with Hosea for the second act of the con.',
+      'The Braithwaites are suspicious — adapt the pitch based on their specific questions.',
+      'Complete the transaction that Hosea has arranged and exit cleanly.',
+      'Ride away from the estate before they can reconsider or check the paperwork.',
+      'Meet Hosea at the agreed point and collect your cut of the proceeds.',
+    ],
+    goldTips: ['This pays well — Hosea\'s cons are the highest-value low-risk jobs in the game; completing this chain unlocks further Hosea missions and deepens the Braithwaite storyline.'],
+  },
+
+  c3_4: {
+    chapter: 'Chapter 3', chapterKey: 'ch3',
+    title: 'Blood Feuds, Ancient and Modern',
+    steps: [
+      'The Gray-Braithwaite feud has reached a crisis point — Dutch wants to exploit it.',
+      'Ride with Dutch to the Gray family\'s Rhodes location and take their side officially.',
+      'Help the Grays confront a group of Braithwaite men who have been raiding their property.',
+      'Fight through the ambush at the bridge between the two estates.',
+      'Escape with the Grays\' representative and receive payment from Sheriff Gray.',
+      'Ride back to camp — Dutch is playing both families simultaneously and the danger is growing.',
+    ],
+    goldTips: ['This introduces Sheriff Gray as a recurring character; complete the mission without alerting the secondary Braithwaite patrol for the gold medal; the double-dealing with both families is one of Chapter 3\'s central tensions.'],
+  },
+
+  c3_5: {
+    chapter: 'Chapter 3', chapterKey: 'ch3',
+    title: 'A Short Walk in a Pretty Town',
+    steps: [
+      'Ride into Rhodes with Dutch and Bill for what appears to be a routine meeting with the Grays.',
+      'Accompany Dutch through Rhodes town center and maintain a low profile during the meet.',
+      'When the situation turns violent without warning, fight through the center of Rhodes.',
+      'Keep Dutch covered as he reaches the extraction point on the far side of town.',
+      'Escape Rhodes with Dutch and Bill as the entire town reacts to the gunfight.',
+    ],
+    goldTips: ['Stay within 10 meters of Dutch at all times for the gold medal; the gunfight in Rhodes town center is a classic ambush scenario — use the buildings\' facades as hard cover and move building to building.'],
+  },
+
+  c3_6: {
+    chapter: 'Chapter 3', chapterKey: 'ch3',
+    title: 'Horse Flesh for Dinner',
+    steps: [
+      'Ride with the Gray boys to steal champion thoroughbred horses from the Braithwaite stables.',
+      'Scout the Braithwaite estate stables using Eagle Eye to identify guard positions.',
+      'Quietly enter the stables and lead the prize horses out — do not spook them or alert the grooms.',
+      'If spotted, mount one horse and drive the others out at a gallop.',
+      'Deliver the stolen thoroughbreds to the Grays\' stable master and collect payment.',
+    ],
+    goldTips: ['This can be done entirely without combat if you\'re quiet — approach from the south side of the stables; horses will follow if you lead the first one out; the Braithwaite horses are worth significant money to the Grays.'],
+  },
+
+  c3_7: {
+    chapter: 'Chapter 3', chapterKey: 'ch3',
+    title: 'Gunpowder, Treason, and Plot',
+    steps: [
+      'Ride with Sean and other gang members on a Braithwaite moonshine warehouse raid.',
+      'Approach the warehouse from the eastern road and scout the perimeter.',
+      'Fight through the warehouse guards to reach the moonshine storage inside.',
+      'Plant explosives at the marked structural points inside the warehouse.',
+      'Escape the building before the explosives detonate — you have 60 seconds after the last charge.',
+      'Ride hard north as the warehouse goes up and Braithwaite reinforcements respond.',
+    ],
+    goldTips: ['Place all charges before lighting the fuse — do not detonate early; this is Sean\'s spotlight mission and one of his best moments; his death later in the chapter hits harder after this.'],
+  },
+
+  c3_8: {
+    chapter: 'Chapter 3', chapterKey: 'ch3',
+    title: 'Paint It, Black',
+    steps: [
+      'Help the Gray family with a sniper job near the Braithwaite estate boundary.',
+      'Take position on the ridge above the Gray-controlled road and equip the bolt-action rifle.',
+      'Wait for the Braithwaite convoy to enter the killing ground below.',
+      'Eliminate the convoy\'s guards from the ridgeline before they can scatter into cover.',
+      'Deal with the remaining convoy members who respond and extract from the ridge.',
+    ],
+    goldTips: ['Place all headshots from the initial ridge position before descending; the convoy bunches up at the bend in the road — use that moment; a scoped rifle with Dead Eye clears this cleanly.'],
+  },
+
+  c3_9: {
+    chapter: 'Chapter 3', chapterKey: 'ch3',
+    title: 'Sodom? Back to Gomorrah',
+    steps: [
+      'Ride with Lenny, Bill, and Sean to rob the Lemoyne National Bank in Rhodes.',
+      'Enter the bank with the crew and take control of the lobby immediately.',
+      'Keep all hostages in place while Lenny works on the vault.',
+      'Fight off the law response from the windows — the Rhodes sheriff and deputies arrive fast.',
+      'When the vault opens, grab everything and begin the fighting retreat through Rhodes.',
+      'Escape the pursuing law enforcement by riding into the Lemoyne back roads.',
+    ],
+    goldTips: ['Keep all hostages alive inside; headshot every lawman at the windows before they can shoot through; this is the Chapter 3 bank robbery — a smaller scale but essential preview of the Saint Denis heist.'],
+  },
+
+  c3_10: {
+    chapter: 'Chapter 3', chapterKey: 'ch3',
+    title: 'The Course of True Love I',
+    isSideQuest: true,
+    steps: [
+      'Find Penelope Braithwaite near the Braithwaite estate — she is trying to escape a forced engagement.',
+      'Listen to her situation: she loves Beau Gray, a member of the enemy family.',
+      'Agree to carry a secret letter to Beau Gray at his family\'s property without the Grays knowing.',
+      'Deliver the letter to Beau and wait for his reply.',
+      'Carry Beau\'s response back to Penelope and help arrange their next secret meeting.',
+    ],
+    goldTips: ['This begins a beautiful 5-part love story that runs through Chapters 3 and 6; deliver each letter quickly and do not linger near either estate\'s guards; the Romeo and Juliet storyline is one of RDR2\'s finest subplots.'],
+  },
+
+  c3_11: {
+    chapter: 'Chapter 3', chapterKey: 'ch3',
+    title: 'The Course of True Love II',
+    isSideQuest: true,
+    steps: [
+      'Return to Penelope at the arranged meeting point near Braithwaite Manor.',
+      'Penelope needs Arthur\'s help to actually meet Beau in person for the first time in weeks.',
+      'Escort Penelope safely past the Braithwaite family guards without being seen.',
+      'Get her to the meeting point and cover the reunion while watching for pursuers.',
+      'Escort Penelope home before her absence is noticed.',
+    ],
+    goldTips: ['Take the back road through the fields — the main road has regular Braithwaite patrols; this mission escalates the stakes and makes the finale in Chapter 6 more earned.'],
+  },
+
+  c3_12: {
+    chapter: 'Chapter 3', chapterKey: 'ch3',
+    title: 'The Course of True Love III',
+    isSideQuest: true,
+    steps: [
+      'Both families have discovered the relationship — Beau has been taken by his family as punishment.',
+      'Help Penelope locate where the Grays are holding Beau.',
+      'Extract Beau from the Gray family\'s control without triggering a full confrontation.',
+      'Get both Penelope and Beau to a safe location outside the immediate reach of both families.',
+      'The couple needs a plan for what comes next — help them arrange their next step.',
+    ],
+    goldTips: ['Stealth extraction of Beau is faster than combat; this part of the story is the most tense — both families are actively watching; completing this unlocks Parts IV and V later in Chapter 6.'],
+  },
+
+  c3_13: {
+    chapter: 'Chapter 3', chapterKey: 'ch3',
+    title: 'We Loved Once and True I',
+    isSideQuest: true,
+    steps: [
+      'Receive a letter from Mary Linton — Arthur\'s former love — at the Valentine post office.',
+      'She is in trouble and needs Arthur\'s help with a specific problem related to her family.',
+      'Ride to the arranged meeting point and hear Mary out.',
+      'Help Mary with her request — it involves a difficult situation with her father.',
+      'Part ways with Mary after the task is done. The feelings between them are unresolved.',
+    ],
+    goldTips: ['Medium or higher honor is required for this chain; the letters from Mary can be collected from any post office after Chapter 2; this is the most emotionally complex stranger chain in the game.'],
+    honorNote: 'Medium or higher honor required to access this chain.',
+  },
+
+  c3_14: {
+    chapter: 'Chapter 3', chapterKey: 'ch3',
+    title: 'We Loved Once and True II',
+    isSideQuest: true,
+    steps: [
+      'Mary writes again — her father has created a new crisis and she needs Arthur one more time.',
+      'Meet Mary at the agreed location and listen to the details of her father\'s situation.',
+      'Accompany Mary to deal with the problem directly.',
+      'Navigate the emotionally charged reunion with her difficult father.',
+      'See Mary off safely and hear her words about what could have been.',
+    ],
+    goldTips: ['Let all dialogue play — Mary\'s conversations with Arthur are the most honest interactions he has with anyone; her perspective on Arthur\'s life cuts deep.'],
+  },
+
+  c3_15: {
+    chapter: 'Chapter 3', chapterKey: 'ch3',
+    title: 'We Loved Once and True III',
+    isSideQuest: true,
+    steps: [
+      'The final Mary Linton mission in this chapter — she needs one more thing from Arthur.',
+      'Ride to Saint Denis and meet her at the theater.',
+      'Spend the evening with Mary and watch a show together — this is a rare moment of peace.',
+      'Walk with Mary afterward and have the conversation that has been building since their reunion.',
+      'Say goodbye. This version of their relationship ends here.',
+    ],
+    goldTips: ['The theater visit is one of the most unique mission segments in the game — watch the entire performance; the conversation afterward is worth reading every word; their parting is one of Arthur\'s most painful moments.'],
+  },
+
+  c3_16: {
+    chapter: 'Chapter 3', chapterKey: 'ch3',
+    title: 'Money Lending and Other Sins IV',
+    isSideQuest: true,
+    steps: [
+      'Collect the Chapter 3 debt assignment from Strauss.',
+      'The debtor is in the Rhodes area — find him at his property south of town.',
+      'The situation is more complicated than a simple collection — there are other parties involved.',
+      'Resolve the debt situation and return funds to Strauss.',
+    ],
+    honorNote: 'High honor: accept partial payment. Low honor: take everything by force.',
+  },
+
+  c3_17: {
+    chapter: 'Chapter 3', chapterKey: 'ch3',
+    title: 'Money Lending and Other Sins V',
+    isSideQuest: true,
+    steps: [
+      'The fifth Strauss debt collection — this one is in the Lemoyne back country.',
+      'The debtor has been hiding from Strauss for months and is not willing to be found.',
+      'Track him using Eagle Eye and local knowledge to his hiding spot.',
+      'Confront him and resolve the debt in whatever manner you judge appropriate.',
+      'Return to Strauss. Arthur\'s discomfort with this work is growing visibly.',
+    ],
+    goldTips: ['This and the Chapter 6 collections set up Arthur\'s eventual rejection of Strauss; playing high honor throughout these makes the Chapter 6 confrontation with Strauss feel fully earned.'],
+    honorImpact: 'High honor release earns significant honor.',
+  },
+
+  c3_18: {
+    chapter: 'Chapter 3', chapterKey: 'ch3',
+    title: 'The Battle of Shady Belle',
+    steps: [
+      'The Lemoyne Raiders have taken over Shady Belle — the gang needs it as a new camp location.',
+      'Approach Shady Belle from the bayou side and scout the Raider positions using Eagle Eye.',
+      'The Raiders have set up in the main house, the outbuildings, and along the bayou bank.',
+      'Clear the outbuildings first from a distance with a rifle before moving toward the main house.',
+      'Storm the main house with the gang and eliminate all remaining Raiders.',
+      'Secure Shady Belle and help the gang begin converting it into a camp.',
+    ],
+    goldTips: ['Snipe the outlying Raiders from the treeline before closing in — there are more inside than it appears; headshot all without taking damage for gold; this ends Chapter 3 and transitions the gang to Shady Belle.'],
+  },
 
   c4_1: {
     chapter: 'Chapter 4', chapterKey: 'ch4',
@@ -1085,6 +1732,133 @@ export const walkthroughData: Record<string, MissionWalkthrough> = {
     honorNote: 'High honor earns a peaceful sunrise ending. Low honor earns a darker conclusion.',
   },
 
+  c6_sq1: {
+    chapter: 'Chapter 6', chapterKey: 'ch6',
+    title: 'The Veteran IV',
+    isSideQuest: true,
+    steps: [
+      'Return to Hamish Sinclair at Cattail Pond after completing The Veteran III.',
+      'Hamish has taken ill and is struggling on his own at the remote camp.',
+      'Help Hamish with the physical tasks he can no longer manage — chopping wood, carrying water, mending his equipment.',
+      'Spend time with him and listen as he talks about his life, the war, and what it cost him.',
+      'Promise to come back. He is a man who has had very few people keep that promise.',
+    ],
+    goldTips: ['This quiet mission is the calm before the storm of Part V; Hamish\'s backstory becomes fully clear here — do not rush the dialogue; completing this unlocks the devastating conclusion in Part V.'],
+    missables: ['Must complete before Red Dead Redemption (the final mission) — Hamish\'s chain expires with Arthur.'],
+  },
+
+  c6_sq2: {
+    chapter: 'Chapter 6', chapterKey: 'ch6',
+    title: 'The Veteran V',
+    isSideQuest: true,
+    steps: [
+      'Return to Cattail Pond one final time to find Hamish in desperate trouble.',
+      'A massive boar has gored Hamish badly — he is losing blood fast.',
+      'Hunt down and kill the boar before returning to Hamish.',
+      'Return to find Hamish. His wound is fatal.',
+      'Sit with Hamish in his final moments. Let him finish everything he wants to say.',
+      'Hamish leaves Arthur his prized war horse — a unique silver dapple pinto that cannot be obtained any other way.',
+    ],
+    goldTips: ['One of the most emotionally powerful encounters in the game; kill the boar quickly with a rifle headshot so you can return to Hamish before he loses consciousness; his final words to Arthur land differently depending on how far Arthur\'s TB has progressed. Do not skip the farewell.'],
+    missables: ['Complete before the final mission — Hamish and his unique horse are permanently lost after Arthur\'s story ends.'],
+    honorImpact: 'Staying with Hamish until the end earns honor.',
+  },
+
+  c6_sq3: {
+    chapter: 'Chapter 6', chapterKey: 'ch6',
+    title: 'Do Not Seek Absolution I — Edith Downes',
+    isSideQuest: true,
+    steps: [
+      'Find Edith Downes near Annesburg — she is the widow of one of Strauss\'s debt victims whose life Arthur helped destroy.',
+      'Edith is now working in degrading conditions at the Annesburg mining camps to survive.',
+      'Speak to her and hear what happened to her family after Arthur\'s debt collection.',
+      'Help Edith get better work — she needs a reference letter and someone to speak up for her.',
+      'Arrange for Edith to have a safer, more dignified source of income.',
+    ],
+    goldTips: ['This mission is Arthur\'s attempt to make right what the debt collection destroyed; the encounter lands harder if you were the one who collected from Thomas Downes in Chapter 2; high honor is required to access this chain.'],
+    honorNote: 'High honor required. This is one of the most morally meaningful stranger chains.',
+    missables: ['Must complete before the final Chapter 6 mission.'],
+  },
+
+  c6_sq4: {
+    chapter: 'Chapter 6', chapterKey: 'ch6',
+    title: 'Do Not Seek Absolution II — Edith Downes',
+    isSideQuest: true,
+    steps: [
+      'Return to Edith Downes after Part I — she has found her footing but faces a new problem.',
+      'A mine foreman is making Edith\'s work conditions dangerous and threatening her again.',
+      'Deal with the foreman — peacefully persuade him or handle it more directly.',
+      'Check in with Edith one final time and see that she is genuinely safe.',
+      'Accept her thanks. She has no money to give — only her words. They are enough.',
+    ],
+    goldTips: ['Peaceful resolution of the foreman situation earns honor; Edith\'s final words to Arthur about redemption are among the most quietly powerful lines in the game; the chain completes with a deep sense of something made right.'],
+    honorImpact: 'Significant positive honor for completing this chain with compassion.',
+  },
+
+  c6_sq5: {
+    chapter: 'Chapter 6', chapterKey: 'ch6',
+    title: 'American Dreams — Serial Killer',
+    isSideQuest: true,
+    steps: [
+      'Find the first piece of a dismembered human body near a road in New Hanover — it will be marked by crows.',
+      'Use Eagle Eye to locate the note attached to the body part. It contains a coded message.',
+      'Find the second body part in West Elizabeth, near the railroad tracks. Another coded note.',
+      'Find the third body part south of Annesburg. Decode all three notes together — they reveal a map location.',
+      'Ride to the marked location (a remote shack near Roanoke Ridge) and enter carefully.',
+      'Confront the serial killer, Edmund Lowry Jr., inside his shack. He is armed and dangerous.',
+      'Eliminate Lowry and bring the evidence to the Rhodes sheriff.',
+    ],
+    goldTips: ['The body parts and notes must be found in any order — check all three before going to the shack; the coded notes reference landmarks visible from the bodies\' locations; one of the darkest and most unsettling quests in the game — do not do this one late at night.'],
+    missables: ['Must complete all three note locations and the shack confrontation before end of Chapter 6.'],
+  },
+
+  c6_sq6: {
+    chapter: 'Chapter 6', chapterKey: 'ch6',
+    title: 'Arcadia for Amateurs — Francis Sinclair (Stranger)',
+    isSideQuest: true,
+    steps: [
+      'Find Francis Sinclair at his cabin in the Grizzlies East — he is a mysterious stranger who wants Arthur to find rock carvings.',
+      'There are 10 rock carvings scattered across the entire map. Each one must be found and sketched.',
+      'Use Eagle Eye near known rock faces and canyon walls — the carvings glow faintly.',
+      'Rock carving locations span New Hanover, Ambarino, Lemoyne, West Elizabeth, and New Austin.',
+      'Return to Sinclair after finding all 10. He is not home. Something is very strange about him.',
+      'Visit the cabin one final time after a long absence — the conclusion reveals something deeply unsettling about Sinclair\'s nature.',
+    ],
+    goldTips: ['Rock carvings can be found across chapters 2-6; check high canyon walls and cliff faces near water; Eagle Eye reveals them from horseback; the final revelation about Sinclair is one of the game\'s most mysterious and discussed endings — do not spoil it for yourself.'],
+    missables: ['Must complete all 10 carvings and revisit the cabin before end of Chapter 6 for the full conclusion.'],
+  },
+
+  c6_sq7: {
+    chapter: 'Chapter 6', chapterKey: 'ch6',
+    title: 'Of Men and Angels III — Sister Calderón',
+    isSideQuest: true,
+    steps: [
+      'Find Sister Calderón one final time in Saint Denis — she has received word about her next posting.',
+      'Sit with her near the church and hear where she is going next and why.',
+      'She speaks with Arthur about his illness and what she has seen of his character.',
+      'She gives Arthur a gift — a small item she has carried for years. Accept it.',
+      'Say goodbye to Sister Calderón. She will not return.',
+    ],
+    goldTips: ['One of the most quietly devastating conversations in the game; Sister Calderón\'s final words to Arthur about his worth as a person are the most direct answer the game gives to whether Arthur finds peace; do not skip or rush this farewell.'],
+    missables: ['Must complete Parts I and II first. This final encounter is available in Chapter 6 only.'],
+    honorImpact: 'High honor required for this final encounter.',
+  },
+
+  c6_sq8: {
+    chapter: 'Chapter 6', chapterKey: 'ch6',
+    title: 'The Noblest of Men — Final Confrontation with Theodore Levin',
+    isSideQuest: true,
+    steps: [
+      'Return to Theodore Levin in the Valentine saloon after finding all four gunslingers.',
+      'Levin has published his book and the final chapter needs one last interview with Arthur.',
+      'Arthur reflects on what he saw in each gunslinger — the cost of living by the gun.',
+      'Levin pays Arthur for his time and adds him to the book\'s acknowledgments.',
+      'The quest concludes. Arthur\'s reward includes the unique off-hand revolver from the chain.',
+    ],
+    goldTips: ['If you missed any gunslinger (Flaco, Emmet, Billy Midnight, or Black Belle) their unique weapon is gone permanently; complete all four before returning to Levin; the unique off-hand revolver granted here cannot be obtained any other way.'],
+    missables: ['All four gunslingers must be completed before this final Levin meeting. Their unique weapons are permanently missable.'],
+  },
+
   // ═══════════════════════════════════════════
   //  EPILOGUE — PART 1
   // ═══════════════════════════════════════════
@@ -1356,6 +2130,9 @@ export const walkthroughData: Record<string, MissionWalkthrough> = {
 };
 
 export const WALKTHROUGH_CHAPTERS = [
+  { key: 'ch1', label: 'Chapter 1', subtitle: 'Colter' },
+  { key: 'ch2', label: 'Chapter 2', subtitle: 'Horseshoe Overlook' },
+  { key: 'ch3', label: 'Chapter 3', subtitle: 'Clemens Point' },
   { key: 'ch4', label: 'Chapter 4', subtitle: 'Saint Denis' },
   { key: 'ch5', label: 'Chapter 5', subtitle: 'Guarma' },
   { key: 'ch6', label: 'Chapter 6', subtitle: 'The Final Act' },
