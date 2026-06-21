@@ -446,7 +446,190 @@ export const walkthroughData: Record<string, MissionWalkthrough> = {
     honorImpact: 'Neutral.',
   },
 
-    // ═══════════════════════════════════════════
+  c4_sq16: {
+    chapter: 'Chapter 4', chapterKey: 'ch4',
+    title: 'The Noblest of Men, and a Woman — Flaco Hernandez',
+    isSideQuest: true,
+    steps: [
+      'Start this quest chain by speaking to journalist Theodore Levin in the Valentine saloon -- he is writing a book about legendary gunslingers and gives Arthur four photographs.',
+      'Flaco Hernandez is found at Cairn Lake in the Grizzlies West region -- travel north into the mountains.',
+      'His gang of outlaws guards the camp. Fight through them or use stealth to reach Flaco directly.',
+      'Confront Flaco outside his cabin. He agrees to the duel immediately -- no prolonged conversation.',
+      'Win the duel against Flaco Hernandez. He is fast -- use Dead Eye and draw at the last possible moment.',
+      'Loot Flaco\'s Revolver from his body -- a unique, ornate revolver with exceptional damage.',
+    ],
+    goldTips: ['Clear the gang members before initiating the duel -- they will shoot you mid-duel if left standing. Flaco\'s Revolver is one of the best unique sidearms in the game.'],
+    missables: ['Flaco\'s Revolver is missable -- loot it immediately or it is gone forever.'],
+    honorImpact: 'Neutral.',
+  },
+
+  c4_sq17: {
+    chapter: 'Chapter 4', chapterKey: 'ch4',
+    title: 'The Noblest of Men, and a Woman — Emmet Granger',
+    isSideQuest: true,
+    steps: [
+      'Emmet Granger is found at his pig farm in Scarlett Meadows, Lemoyne -- south of the Flat Iron Lake region near Emerald Ranch.',
+      'Approach the farm. Granger is an arrogant braggart who immediately insults Arthur.',
+      'He refuses to duel until you shovel pig manure for him -- degrade yourself and do the chore to trigger the duel.',
+      'After the task, Granger draws without warning from behind. React immediately to win.',
+      'Loot Emmet Granger\'s Shotgun from his body -- a rare double-barrel shotgun with custom engravings.',
+    ],
+    goldTips: ['Granger draws from behind as a surprise -- be ready to enter Dead Eye the moment the duel prompt appears. His shotgun is the reward, not a pistol -- it is worth the humiliation.'],
+    missables: ['Granger\'s Shotgun is missable -- loot immediately after the duel.'],
+    honorImpact: 'Neutral.',
+  },
+
+  c4_sq18: {
+    chapter: 'Chapter 4', chapterKey: 'ch4',
+    title: 'The Noblest of Men, and a Woman — Black Belle',
+    isSideQuest: true,
+    steps: [
+      'Black Belle is located in the Bluewater Marsh area of Lemoyne, north of Saint Denis -- find her remote cabin in the bayou.',
+      'Unlike the other gunslingers, Black Belle is alive, sharp, and very much in control of the situation.',
+      'As you arrive, bounty hunters ambush the location. Black Belle immediately joins the fight -- cover her.',
+      'Fight off multiple waves of bounty hunters attacking from multiple directions through the marsh.',
+      'After the fight, Black Belle sits for the interview and photo. She is the only gunslinger who survives with dignity.',
+      'She gives Arthur advice about living free -- one of the most memorable NPC conversations in the game.',
+    ],
+    goldTips: ['Black Belle fights alongside you -- keep her alive during the bounty hunter waves or the mission fails. Use the cabin structure and trees as cover positions.'],
+    missables: ['No unique weapon reward from Black Belle, but her photograph is required for the quest completion.'],
+    honorImpact: 'Neutral -- but her dialogue is worth listening to fully.',
+  },
+
+  c4_sq19: {
+    chapter: 'Chapter 4', chapterKey: 'ch4',
+    title: 'The Noblest of Men, and a Woman — Final Confrontation',
+    isSideQuest: true,
+    steps: [
+      'After tracking down all four gunslingers (Billy Midnight, Flaco Hernandez, Emmet Granger, Black Belle), return to Theodore Levin in Valentine.',
+      'Find Levin at the saloon -- he is alarmed and tells Arthur that Jim "Boy" Calloway, the most famous gunslinger, wants to duel Arthur himself.',
+      'Calloway confronts Arthur outside the saloon -- he is drunk, mean, and paranoid about his own legend.',
+      'The situation escalates. Calloway draws first in a rage.',
+      'Win the final duel against Jim "Boy" Calloway -- he is the most dangerous of the chain despite his age and drunkenness.',
+      'Loot Calloway\'s Revolver -- the finest unique revolver in the game -- from his body.',
+      'Speak to Levin one final time. He is horrified by how his book research ended.',
+    ],
+    goldTips: ['Calloway\'s Revolver has exceptional stats and unique engravings -- do not miss it. This is the best unique revolver available before Chapter 6. Draw at the absolute last moment for the gold medal.'],
+    missables: ['Calloway\'s Revolver is missable if you do not loot immediately. This entire chain must be completed before the end of Chapter 6.'],
+    honorImpact: 'Neutral.',
+  },
+
+  c4_sq20: {
+    chapter: 'Chapter 4', chapterKey: 'ch4',
+    title: 'The Veteran II',
+    isSideQuest: true,
+    steps: [
+      'Return to Hamish Sinclair at Cattail Pond in Ambarino -- he will be in distress when you arrive.',
+      'A wolf has been stalking the area and attacked Hamish\'s horse. He needs help tracking and eliminating it.',
+      'Follow the wolf tracks using Eagle Eye through the treeline north of the pond.',
+      'The wolf ambushes from cover -- react quickly when it charges. Kill it before it can do further damage.',
+      'Return to Hamish and help him tend to his injured horse. He thanks Arthur with quiet dignity.',
+      'Hamish invites Arthur to return again -- the friendship between them deepens.',
+    ],
+    goldTips: ['The wolf attacks fast -- have your weapon drawn and Dead Eye ready before following the final set of tracks. Completing this unlocks The Veteran III.'],
+    missables: ['Must complete before Chapter 6 ends to access the full Hamish Sinclair story chain.'],
+    honorImpact: 'Positive honor for helping Hamish.',
+  },
+
+  c4_sq21: {
+    chapter: 'Chapter 4', chapterKey: 'ch4',
+    title: 'The Veteran III',
+    isSideQuest: true,
+    steps: [
+      'Return to Hamish Sinclair near Cattail Pond after completing The Veteran II.',
+      'Hamish\'s prized horse, an Ohio Draught Horse, has been stolen by a gang of horse thieves.',
+      'Ride hard after the thieves -- they are heading toward Annesburg with the horse in tow.',
+      'Intercept the thieves before they reach their hideout. Shoot the riders but do not harm the horse.',
+      'Retrieve Hamish\'s horse and lead it back to him at Cattail Pond.',
+      'Hamish is deeply grateful -- he talks more openly about his past and his life after the Civil War.',
+    ],
+    goldTips: ['Use a rifle to pick off horse thieves at range -- getting into a close melee risks hitting Hamish\'s horse. Return the horse before exploring the area.'],
+    missables: ['Must complete the full Hamish chain before end of Chapter 6 for the emotional conclusion.'],
+    honorImpact: 'Positive honor.',
+  },
+
+  c4_sq22: {
+    chapter: 'Chapter 4', chapterKey: 'ch4',
+    title: 'Of Men and Angels II',
+    isSideQuest: true,
+    steps: [
+      'Return to Sister Calderón in Saint Denis after donating to her mission in Part I -- she is near the Saint Denis train station or the church.',
+      'She has fallen ill from exhaustion and overwork among the city\'s poor. She is resting but still working.',
+      'Donate more money to her mission to help fund medical supplies.',
+      'Sit with her and listen to her speak about faith, suffering, and redemption -- the conversation is one of the most quietly moving in the game.',
+      'She tells Arthur that the work she does is not about reward but about the doing of it. These words resonate differently depending on how far Arthur\'s illness has progressed.',
+    ],
+    goldTips: ['This encounter hits hardest if Arthur\'s tuberculosis diagnosis has occurred -- her words about mortality and meaning feel directed at him personally. Take your time with the dialogue.'],
+    missables: ['Must donate in Part I to unlock this second encounter. Complete before end of Chapter 6.'],
+    honorImpact: 'High honor gain for donating again.',
+  },
+
+  c4_sq23: {
+    chapter: 'Chapter 4', chapterKey: 'ch4',
+    title: 'He\'s British, of Course',
+    isSideQuest: true,
+    steps: [
+      'Find a frantic British man named Ridgewood near the Saint Denis circus tent or just outside the city -- he approaches Arthur in a panic.',
+      'His exotic animals have escaped from his traveling menagerie. He needs help rounding them up.',
+      'Track and lasso the escaped animals -- a lion is the main priority. Use Eagle Eye to track them through the bayou.',
+      'The lion is dangerous and will attack on sight. Approach carefully with your lasso ready -- do not shoot it or Ridgewood will not pay.',
+      'Return each animal safely to Ridgewood. He rewards you with cash and entertains you with absurd British composure throughout the ordeal.',
+    ],
+    goldTips: ['Lasso the lion from horseback at a safe distance -- it can kill Arthur in one swipe if you approach on foot. This is one of the funniest stranger encounters in the game.'],
+    missables: ['Available throughout Chapters 4 and 5 near Saint Denis.'],
+    honorImpact: 'Neutral.',
+  },
+
+  c4_sq24: {
+    chapter: 'Chapter 4', chapterKey: 'ch4',
+    title: 'The Mercies of Knowledge — Dr. Joseph Hadley',
+    isSideQuest: true,
+    steps: [
+      'Find Dr. Joseph Hadley traveling in New Hanover -- he is usually near the roads around Emerald Ranch or north of Flatneck Station.',
+      'Dr. Hadley is a scientist studying pain tolerance and human resilience. He asks Arthur to participate in an experiment for pay.',
+      'Agree to the experiment. Hadley straps Arthur into a rudimentary electric shock chair -- a wooden frame with copper wires and a hand-cranked generator.',
+      'Hadley cranks the generator and delivers a mild shock. Arthur\'s reaction depends on your button input.',
+      'Collect the payment from Dr. Hadley -- he thanks you with scientific detachment.',
+      'Dr. Hadley can be found a second time at a different location -- he remembers Arthur and offers another experiment at higher voltage for more pay.',
+    ],
+    goldTips: ['This is a short, humorous two-part stranger encounter. Easy money. The electric chair device is Dr. Hadley\'s invention -- crude but memorable. Both encounters pay well.'],
+    missables: ['Both Hadley encounters must be completed before end of Chapter 6.'],
+    honorImpact: 'Neutral.',
+  },
+
+  c4_sq25: {
+    chapter: 'Chapter 4', chapterKey: 'ch4',
+    title: 'The Widow of Willard\'s Rest',
+    isSideQuest: true,
+    steps: [
+      'Find Eleanor Toward at Willard\'s Rest, a remote homestead northeast of Annesburg in New Hanover.',
+      'She is an elderly widow living entirely alone after her husband\'s recent death. She asks Arthur to help with farm tasks she can no longer manage.',
+      'Chop firewood at the woodpile beside the cabin -- complete the task fully.',
+      'Check the root cellar and repair the broken latch she points out.',
+      'Sit with Eleanor and have a brief conversation over coffee. She reflects on her long life with quiet dignity.',
+      'Leave her a donation of supplies or money before departing -- she will not ask for it.',
+    ],
+    goldTips: ['A gentle, unhurried encounter that rewards patience. Leave a donation even though she doesn\'t ask -- it earns honor and feels right. One of the most human moments in the game.'],
+    honorImpact: 'Positive honor for donating and helping fully.',
+  },
+
+  c4_sq26: {
+    chapter: 'Chapter 4', chapterKey: 'ch4',
+    title: 'Smoking and Other Hobbies — Cigarette Card Collector',
+    isSideQuest: true,
+    steps: [
+      'Find Phineas Ramsbottom\'s advertisement posted in Saint Denis or Valentine -- he is a passionate cigarette card collector.',
+      'Purchase premium cigarettes from any general store or gunsmith -- each pack contains one collectible card.',
+      'Open packs to reveal cards. There are 144 unique cards across 12 sets. Cards are also found in the world at campsites, buildings, and lootable locations.',
+      'Bring full completed sets to Phineas Ramsbottom -- he pays handsomely for each completed set.',
+      'Completing all 12 sets and exchanging them earns a unique reward item and significant cash.',
+    ],
+    goldTips: ['Premium cigarettes are expensive if bought individually. Craft cigarettes using tobacco at camp for cheaper access to cards. Some rare cards only appear in specific locations -- check Saint Denis saloons, manor houses, and Annesburg buildings carefully.'],
+    missables: ['Ramsbottom leaves after Chapter 6 -- complete the exchange before the end of the story.'],
+    honorImpact: 'Neutral -- collection quest.',
+  },
+
+  // ═══════════════════════════════════════════
   //  CHAPTER 5
   // ═══════════════════════════════════════════
 
