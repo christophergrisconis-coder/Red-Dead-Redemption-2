@@ -163,4 +163,4 @@ overrides:
   qs: ">=6.15.2"
   js-yaml: ">=4.2.0"
   markdown-it: ">=14.2.0"
-  "@babel/core": ">=7.29.6"
+  "@babel/core": "^7.26.0"
