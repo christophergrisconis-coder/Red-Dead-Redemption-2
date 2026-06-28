@@ -1,5 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Dimensions, Easing, Pressable, StyleSheet, Text, View } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
@@ -8,41 +8,62 @@ interface Props {
   onDismiss: () => void;
 }
 
-const STAR_POSITIONS = Array.from({ length: 32 }, (_, i) => ({
-  x: (((i * 137.5) % 100) / 100) * width,
-  y: Math.abs(((i * 97.3) % 80) / 100) * height * 0.7 + 20,
-  size: (i % 3) + 1,
-  opacity: 0.12 + (i % 5) * 0.07,
-  twinkleDelay: (i * 200) % 2000,
+type Scene = 'A' | 'B' | 'C';
+
+// ── Video-matching visual tokens ──
+const TOKENS = {
+  charcoal: '#0D0A08',
+  bone: '#F0E8D8',
+  gold: '#C9A227',
+  goldBright: '#D4A840',
+  goldDim: '#7A5A18',
+  ash: '#2A1F15',
+  blood: '#8B1A1A',
+};
+
+// ═══════════════════════════════════════════
+// SCENE A — Cinematic Title Reveal (0–5s)
+// ═══════════════════════════════════════════
+
+const DUST_COUNT = 24;
+const DUST = Array.from({ length: DUST_COUNT }, (_, i) => ({
+  x: (Math.sin(i * 2.7) * 0.5 + 0.5) * width,
+  y: height * 0.3 + (Math.cos(i * 1.9) * 0.3) * height * 0.5,
+  size: 1 + (i % 3),
+  delay: (i * 210) % 3000,
+  duration: 2000 + (i * 300) % 2000,
 }));
 
-const EMBER_COUNT = 18;
+const EMBER_COUNT = 14;
 const EMBERS = Array.from({ length: EMBER_COUNT }, (_, i) => ({
   x: width * 0.3 + (((i * 73) % 100) / 100) * width * 0.4,
   size: 2 + (i % 3),
   color: i % 3 === 0 ? '#FF6820' : i % 3 === 1 ? '#FFB830' : '#FF4400',
-  startDelay: (i * 350) % 3500,
-  duration: 2800 + (i * 400) % 2200,
-  driftX: ((i % 5) - 2) * 18,
+  delay: (i * 400) % 4000,
+  duration: 3000 + (i * 400) % 2500,
+  driftX: ((i % 5) - 2) * 20,
 }));
 
-const RIVER_LINES = Array.from({ length: 6 }, (_, i) => ({
-  y: height * 0.78 + i * 14,
-  opacity: 0.06 + i * 0.015,
-  width: width * (0.5 + i * 0.08),
-  speed: 3200 + i * 500,
-  delay: i * 400,
-}));
-
-function TwinklingStar({ x, y, size, opacity, delay }: { x: number; y: number; size: number; opacity: number; delay: number }) {
-  const anim = useRef(new Animated.Value(opacity)).current;
+function DustParticle({ x, y, size, delay, duration }: typeof DUST[0]) {
+  const opacity = useRef(new Animated.Value(0)).current;
+  const translateY = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     const loop = Animated.loop(
       Animated.sequence([
         Animated.delay(delay),
-        Animated.timing(anim, { toValue: opacity * 0.3, duration: 900 + delay % 600, useNativeDriver: true, easing: Easing.inOut(Easing.sin) }),
-        Animated.timing(anim, { toValue: opacity, duration: 900 + delay % 600, useNativeDriver: true, easing: Easing.inOut(Easing.sin) }),
+        Animated.parallel([
+          Animated.sequence([
+            Animated.timing(opacity, { toValue: 0.6, duration: duration * 0.2, useNativeDriver: true }),
+            Animated.timing(opacity, { toValue: 0, duration: duration * 0.8, useNativeDriver: true }),
+          ]),
+          Animated.timing(translateY, {
+            toValue: -60 - Math.random() * 40,
+            duration,
+            useNativeDriver: true,
+            easing: Easing.out(Easing.quad),
+          }),
+        ]),
       ])
     );
     loop.start();
@@ -58,8 +79,9 @@ function TwinklingStar({ x, y, size, opacity, delay }: { x: number; y: number; s
         width: size,
         height: size,
         borderRadius: size,
-        backgroundColor: '#EDD9A3',
-        opacity: anim,
+        backgroundColor: TOKENS.bone,
+        opacity,
+        transform: [{ translateY }],
       }}
     />
   );
@@ -70,6 +92,7 @@ function Ember({ x, size, color, delay, duration, driftX }: { x: number; size: n
   const opacity = useRef(new Animated.Value(0)).current;
   const translateX = useRef(new Animated.Value(0)).current;
   const scale = useRef(new Animated.Value(1)).current;
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const startAnim = () => {
@@ -77,7 +100,6 @@ function Ember({ x, size, color, delay, duration, driftX }: { x: number; size: n
       translateX.setValue(0);
       opacity.setValue(0);
       scale.setValue(1);
-
       Animated.sequence([
         Animated.delay(delay),
         Animated.parallel([
@@ -101,10 +123,13 @@ function Ember({ x, size, color, delay, duration, driftX }: { x: number; size: n
           Animated.timing(scale, { toValue: 0.2, duration, useNativeDriver: true }),
         ]),
       ]).start(() => {
-        setTimeout(startAnim, Math.random() * 1000);
+        timeoutRef.current = setTimeout(startAnim, Math.random() * 1000);
       });
     };
     startAnim();
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
   }, []);
 
   return (
@@ -122,43 +147,6 @@ function Ember({ x, size, color, delay, duration, driftX }: { x: number; size: n
         shadowColor: color,
         shadowOpacity: 0.8,
         shadowRadius: 4,
-      }}
-    />
-  );
-}
-
-function RiverLine({ y, opacity, lineWidth, speed, delay }: { y: number; opacity: number; lineWidth: number; speed: number; delay: number }) {
-  const x = useRef(new Animated.Value(-lineWidth)).current;
-
-  useEffect(() => {
-    const loop = Animated.loop(
-      Animated.sequence([
-        Animated.delay(delay),
-        Animated.timing(x, {
-          toValue: width,
-          duration: speed,
-          useNativeDriver: true,
-          easing: Easing.linear,
-        }),
-        Animated.timing(x, { toValue: -lineWidth, duration: 0, useNativeDriver: true }),
-      ])
-    );
-    loop.start();
-    return () => loop.stop();
-  }, []);
-
-  return (
-    <Animated.View
-      style={{
-        position: 'absolute',
-        top: y,
-        left: 0,
-        width: lineWidth,
-        height: 1.5,
-        borderRadius: 1,
-        backgroundColor: '#3A6A8A',
-        opacity,
-        transform: [{ translateX: x }],
       }}
     />
   );
@@ -210,147 +198,288 @@ function CampfireGlow() {
   );
 }
 
+// ═══════════════════════════════════════════
+// SCENE B — Feature Flash (5–10s)
+// ═══════════════════════════════════════════
+
+const FEATURES = [
+  { icon: '📖', label: 'Full Walkthrough', sub: 'All Chapters · Gold Medals' },
+  { icon: '🗺️', label: 'Interactive Map', sub: 'Draw & Annotate with Apple Pencil' },
+  { icon: '🦌', label: '16 Legendary Animals', sub: 'Exact Piggyback Locations' },
+  { icon: '🎣', label: '14 Legendary Fish', sub: 'Lures · Strategies · Maps' },
+  { icon: '💰', label: '24 Gold Bar Locations', sub: 'Lockbox Puzzles Solved' },
+  { icon: '🎴', label: '144 Cigarette Cards', sub: 'All 12 Sets · Atlas #601–630' },
+];
+
+// ═══════════════════════════════════════════
+// MAIN COMPONENT
+// ═══════════════════════════════════════════
+
 export function WelcomeScene({ onDismiss }: Props) {
-  const bgFade = useRef(new Animated.Value(0)).current;
-  const titleY = useRef(new Animated.Value(30)).current;
-  const titleOpacity = useRef(new Animated.Value(0)).current;
-  const dividerScale = useRef(new Animated.Value(0)).current;
-  const subtitleOpacity = useRef(new Animated.Value(0)).current;
-  const badgeOpacity = useRef(new Animated.Value(0)).current;
-  const btnOpacity = useRef(new Animated.Value(0)).current;
+  const [scene, setScene] = useState<Scene>('A');
+  const [featureIdx, setFeatureIdx] = useState(0);
+  const [phase, setPhase] = useState(0);
   const exitFade = useRef(new Animated.Value(1)).current;
-  const horizonGlow = useRef(new Animated.Value(0.3)).current;
 
+  // Scene timing orchestration
   useEffect(() => {
-    Animated.sequence([
-      Animated.parallel([
-        Animated.timing(bgFade, { toValue: 1, duration: 900, useNativeDriver: true }),
-      ]),
-      Animated.parallel([
-        Animated.spring(titleY, { toValue: 0, friction: 8, tension: 60, useNativeDriver: true }),
-        Animated.timing(titleOpacity, { toValue: 1, duration: 700, useNativeDriver: true }),
-      ]),
-      Animated.timing(dividerScale, { toValue: 1, duration: 450, useNativeDriver: true }),
-      Animated.timing(subtitleOpacity, { toValue: 1, duration: 550, useNativeDriver: true }),
-      Animated.timing(badgeOpacity, { toValue: 1, duration: 400, useNativeDriver: true }),
-      Animated.timing(btnOpacity, { toValue: 1, duration: 500, useNativeDriver: true }),
-    ]).start();
-
-    const glowLoop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(horizonGlow, { toValue: 0.55, duration: 2200, useNativeDriver: true, easing: Easing.inOut(Easing.sin) }),
-        Animated.timing(horizonGlow, { toValue: 0.28, duration: 2200, useNativeDriver: true, easing: Easing.inOut(Easing.sin) }),
-      ])
-    );
-    glowLoop.start();
-    return () => glowLoop.stop();
-  }, []);
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    if (scene === 'A') {
+      timers.push(setTimeout(() => setPhase(1), 500));
+      timers.push(setTimeout(() => setPhase(2), 2000));
+      timers.push(setTimeout(() => setPhase(3), 3500));
+      timers.push(setTimeout(() => { setScene('B'); setPhase(0); setFeatureIdx(0); }, 5000));
+    } else if (scene === 'B') {
+      timers.push(setTimeout(() => setFeatureIdx(1), 1200));
+      timers.push(setTimeout(() => setFeatureIdx(2), 2000));
+      timers.push(setTimeout(() => setFeatureIdx(3), 2800));
+      timers.push(setTimeout(() => setFeatureIdx(4), 3600));
+      timers.push(setTimeout(() => setFeatureIdx(5), 4400));
+      timers.push(setTimeout(() => { setScene('C'); setPhase(0); }, 6000));
+    } else if (scene === 'C') {
+      timers.push(setTimeout(() => setPhase(1), 600));
+      timers.push(setTimeout(() => setPhase(2), 1800));
+      timers.push(setTimeout(() => setPhase(3), 3200));
+    }
+    return () => timers.forEach(t => clearTimeout(t));
+  }, [scene]);
 
   const handleDismiss = () => {
-    Animated.timing(exitFade, { toValue: 0, duration: 650, useNativeDriver: true }).start(() => {
+    Animated.timing(exitFade, { toValue: 0, duration: 700, useNativeDriver: true }).start(() => {
       onDismiss();
     });
   };
 
   return (
     <Animated.View style={[styles.root, { opacity: exitFade }]}>
-      {/* Sky gradient */}
-      <LinearGradient
-        colors={['#02010A', '#07030F', '#0F0608', '#1A0A04', '#251206', '#1A0A04']}
-        locations={[0, 0.15, 0.35, 0.55, 0.75, 1]}
-        style={StyleSheet.absoluteFill}
-      />
+      {/* Cinematic background — radial gradient matching video */}
+      <View
+        style={{
+          ...StyleSheet.absoluteFillObject,
+          backgroundColor: TOKENS.charcoal,
+        }}
+      >
+        <LinearGradient
+          colors={['transparent', 'transparent', '#3D1A06', '#0D0602']}
+          locations={[0, 0.5, 0.75, 1]}
+          style={StyleSheet.absoluteFill}
+        />
+      </View>
 
-      {/* Horizon campfire glow (bottom) */}
-      <LinearGradient
-        colors={['transparent', 'transparent', '#3A1200', '#7A2800', '#3A1200', 'transparent']}
-        locations={[0, 0.55, 0.72, 0.85, 0.93, 1]}
-        style={StyleSheet.absoluteFill}
-      />
-
-      {/* Animated horizon pulse */}
-      <Animated.View
-        style={[
-          styles.horizonGlowBand,
-          { opacity: horizonGlow },
-        ]}
-      />
-
-      {/* Campfire soft glow blob */}
+      {/* Campfire glow at bottom */}
+      <View
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: width * 0.2,
+          right: width * 0.2,
+          height: height * 0.35,
+          backgroundColor: 'transparent',
+        }}
+      >
+        <LinearGradient
+          colors={['transparent', 'rgba(220,100,20,0.25)', 'transparent']}
+          locations={[0, 0.5, 1]}
+          style={StyleSheet.absoluteFill}
+        />
+      </View>
       <CampfireGlow />
 
-      {/* River shimmer lines */}
-      {RIVER_LINES.map((r, i) => (
-        <RiverLine key={i} y={r.y} opacity={r.opacity} lineWidth={r.width} speed={r.speed} delay={r.delay} />
+      {/* Horizon line */}
+      <View
+        style={{
+          position: 'absolute',
+          bottom: height * 0.18,
+          left: 0,
+          right: 0,
+          height: 1,
+          backgroundColor: 'transparent',
+        }}
+      >
+        <LinearGradient
+          colors={['transparent', 'rgba(200,140,40,0.4)', 'rgba(220,160,60,0.6)', 'rgba(200,140,40,0.4)', 'transparent']}
+          locations={[0, 0.2, 0.5, 0.8, 1]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={StyleSheet.absoluteFill}
+        />
+      </View>
+
+      {/* Dust particles */}
+      {DUST.map((d, i) => (
+        <DustParticle key={i} x={d.x} y={d.y} size={d.size} delay={d.delay} duration={d.duration} />
       ))}
 
-      {/* Campfire embers rising */}
+      {/* Rising embers */}
       {EMBERS.map((e, i) => (
-        <Ember key={i} x={e.x} size={e.size} color={e.color} delay={e.startDelay} duration={e.duration} driftX={e.driftX} />
-      ))}
-
-      {/* Twinkling stars */}
-      {STAR_POSITIONS.map((s, i) => (
-        <TwinklingStar key={i} x={s.x} y={s.y} size={s.size} opacity={s.opacity} delay={s.twinkleDelay} />
+        <Ember key={i} x={e.x} size={e.size} color={e.color} delay={e.delay} duration={e.duration} driftX={e.driftX} />
       ))}
 
       <Pressable style={styles.touchArea} onPress={handleDismiss}>
-        <Animated.View style={[styles.content, { opacity: bgFade }]}>
 
-          <Animated.View style={[styles.topRule, { opacity: bgFade }]}>
-            <View style={[styles.ruleLine, { backgroundColor: '#5A3A10' }]} />
-            <Text style={styles.ruleStar}>✦</Text>
-            <View style={[styles.ruleLine, { backgroundColor: '#5A3A10' }]} />
-          </Animated.View>
+        {/* ═══ SCENE A: Title Reveal ═══ */}
+        {scene === 'A' && (
+          <View style={styles.sceneContainer}>
+            {/* Top rule */}
+            <Animated.View
+              style={[
+                styles.rule,
+                { backgroundColor: TOKENS.gold, width: 100, opacity: phase >= 1 ? 1 : 0 },
+              ]}
+            />
 
-          <Animated.Text style={[styles.gameLabel, { opacity: bgFade }]}>
-            RED DEAD REDEMPTION II
-          </Animated.Text>
+            <Animated.Text
+              style={[
+                styles.gameLabel,
+                { opacity: phase >= 1 ? 1 : 0 },
+              ]}
+            >
+              RED DEAD REDEMPTION II
+            </Animated.Text>
 
-          <Animated.Text
-            style={[
-              styles.mainTitle,
-              {
-                opacity: titleOpacity,
-                transform: [{ translateY: titleY }],
-              },
-            ]}
-          >
-            The Outlaw's{'\n'}Complete Guide
-          </Animated.Text>
+            <Animated.Text
+              style={[
+                styles.outlawTitle,
+                {
+                  opacity: phase >= 2 ? 1 : 0,
+                  transform: [{ scale: phase >= 2 ? 1 : 0.92 }],
+                },
+              ]}
+            >
+              THE OUTLAW'S
+            </Animated.Text>
 
-          <Animated.View style={[styles.divider, { transform: [{ scaleX: dividerScale }] }]}>
-            <View style={[styles.dividerLine, { backgroundColor: '#C8901A' }]} />
-            <Text style={styles.dividerStar}>✦</Text>
-            <View style={[styles.dividerLine, { backgroundColor: '#C8901A' }]} />
-            <Text style={styles.dividerStar}>✦</Text>
-            <View style={[styles.dividerLine, { backgroundColor: '#C8901A' }]} />
-          </Animated.View>
+            <Animated.Text
+              style={[
+                styles.guideTitle,
+                {
+                  opacity: phase >= 2 ? 1 : 0,
+                  transform: [{ scale: phase >= 2 ? 1 : 0.92 }],
+                },
+              ]}
+            >
+              COMPLETE GUIDE
+            </Animated.Text>
 
-          <Animated.Text style={[styles.subtitle, { opacity: subtitleOpacity }]}>
-            Missions · Walkthroughs · Collectibles{'\n'}
-            Progress Tracking · Treasure Hunts
-          </Animated.Text>
+            <Animated.View
+              style={[
+                styles.rule,
+                { backgroundColor: TOKENS.gold, width: 120, opacity: phase >= 2 ? 1 : 0 },
+              ]}
+            />
 
-          <Animated.View style={[styles.editionBadge, { opacity: badgeOpacity }]}>
-            <Text style={styles.editionText}>✦  PlayStation 5 Edition  ✦</Text>
-          </Animated.View>
+            <Animated.Text
+              style={[
+                styles.ps5Badge,
+                { opacity: phase >= 3 ? 1 : 0 },
+              ]}
+            >
+              PS5 EDITION
+            </Animated.Text>
+          </View>
+        )}
 
-          <Animated.View style={[styles.btnWrap, { opacity: btnOpacity }]}>
-            <View style={styles.beginBtn}>
+        {/* ═══ SCENE B: Feature Flash ═══ */}
+        {scene === 'B' && (
+          <View style={styles.sceneContainer}>
+            <Animated.Text
+              style={[
+                styles.everythingLabel,
+                { opacity: phase >= 0 ? 1 : 0 },
+              ]}
+            >
+              EVERYTHING YOU NEED
+            </Animated.Text>
+
+            <Animated.View
+              style={[
+                styles.featureBlock,
+                { opacity: 1 },
+              ]}
+            >
+              <Text style={styles.featureIcon}>{FEATURES[featureIdx].icon}</Text>
+              <Text style={styles.featureLabel}>{FEATURES[featureIdx].label}</Text>
+              <Text style={styles.featureSub}>{FEATURES[featureIdx].sub}</Text>
+            </Animated.View>
+
+            {/* Progress dots */}
+            <View style={styles.dotsRow}>
+              {FEATURES.map((_, i) => (
+                <View
+                  key={i}
+                  style={[
+                    styles.dot,
+                    {
+                      width: i === featureIdx ? 24 : 6,
+                      backgroundColor: i === featureIdx ? TOKENS.gold : 'rgba(200,160,60,0.3)',
+                    },
+                  ]}
+                />
+              ))}
+            </View>
+          </View>
+        )}
+
+        {/* ═══ SCENE C: Logo Lock-up + CTA ═══ */}
+        {scene === 'C' && (
+          <View style={styles.sceneContainer}>
+            <Animated.View
+              style={[
+                styles.itBadge,
+                { opacity: phase >= 1 ? 1 : 0, transform: [{ scale: phase >= 1 ? 1 : 0.9 }] },
+              ]}
+            >
+              <Text style={styles.itBadgeText}>INTERACTIVE GUIDE</Text>
+            </Animated.View>
+
+            <Animated.Text
+              style={[
+                styles.rdr2Title,
+                { opacity: phase >= 1 ? 1 : 0 },
+              ]}
+            >
+              RDR2
+            </Animated.Text>
+
+            <Animated.View
+              style={[
+                styles.ruleGradient,
+                { opacity: phase >= 2 ? 1 : 0 },
+              ]}
+            >
+              <View style={{ flex: 1, height: 1, backgroundColor: 'rgba(200,160,60,0.7)' }} />
+            </Animated.View>
+
+            <Animated.View
+              style={[
+                styles.tagRow,
+                { opacity: phase >= 2 ? 1 : 0 },
+              ]}
+            >
+              {['Walkthrough', 'Collectibles', 'Map + Drawing', 'Stats'].map(tag => (
+                <Text key={tag} style={styles.tagText}>{tag}</Text>
+              ))}
+            </Animated.View>
+
+            <Animated.View
+              style={[
+                styles.beginBtn,
+                {
+                  opacity: phase >= 3 ? 1 : 0,
+                  transform: [{ scale: phase >= 3 ? 1 : 0.9 }],
+                },
+              ]}
+            >
               <Text style={styles.beginBtnText}>BEGIN YOUR JOURNEY</Text>
               <Text style={styles.beginArrow}> →</Text>
-            </View>
-            <Text style={styles.tapHint}>tap anywhere to enter</Text>
-          </Animated.View>
+            </Animated.View>
 
-          <Animated.View style={[styles.bottomRule, { opacity: bgFade }]}>
-            <View style={[styles.ruleLine, { backgroundColor: '#5A3A10' }]} />
-            <Text style={styles.ruleStar}>✦</Text>
-            <View style={[styles.ruleLine, { backgroundColor: '#5A3A10' }]} />
-          </Animated.View>
+            <Animated.Text style={[styles.tapHint, { opacity: phase >= 3 ? 0.5 : 0 }]}>
+              tap anywhere to enter
+            </Animated.Text>
+          </View>
+        )}
 
-        </Animated.View>
       </Pressable>
     </Animated.View>
   );
@@ -361,127 +490,174 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     zIndex: 9999,
   },
-  horizonGlowBand: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: height * 0.28,
-    backgroundColor: '#8A2800',
-    borderTopLeftRadius: width,
-    borderTopRightRadius: width,
-  },
   touchArea: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  content: {
-    width: '100%',
+  sceneContainer: {
     alignItems: 'center',
+    gap: 12,
     paddingHorizontal: 32,
-    gap: 0,
   },
-  topRule: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '80%',
-    marginBottom: 24,
-    gap: 8,
-  },
-  bottomRule: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '80%',
-    marginTop: 32,
-    gap: 8,
-  },
-  ruleLine: {
-    flex: 1,
-    height: StyleSheet.hairlineWidth,
-  },
-  ruleStar: {
-    color: '#5A3A10',
-    fontSize: 10,
+  // ── Scene A ──
+  rule: {
+    height: 1,
+    opacity: 0.6,
+    marginVertical: 8,
   },
   gameLabel: {
-    color: '#907558',
+    color: TOKENS.gold,
+    fontSize: 11,
+    fontFamily: 'Inter_600SemiBold',
+    letterSpacing: 5,
+    textTransform: 'uppercase',
+    marginTop: 4,
+  },
+  outlawTitle: {
+    color: TOKENS.bone,
+    fontSize: 42,
+    fontFamily: 'Inter_900Black',
+    letterSpacing: 3,
+    textTransform: 'uppercase',
+    textAlign: 'center',
+    lineHeight: 50,
+    textShadowColor: 'rgba(220,120,20,0.5)',
+    textShadowOffset: { width: 0, height: 4 },
+    textShadowRadius: 40,
+  },
+  guideTitle: {
+    color: TOKENS.gold,
+    fontSize: 32,
+    fontFamily: 'Inter_700Bold',
+    letterSpacing: 4,
+    textTransform: 'uppercase',
+    textAlign: 'center',
+    lineHeight: 40,
+    textShadowColor: 'rgba(220,120,20,0.4)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 20,
+  },
+  ps5Badge: {
+    color: '#A08050',
+    fontSize: 11,
+    fontFamily: 'Inter_500Medium',
+    letterSpacing: 4,
+    textTransform: 'uppercase',
+    marginTop: 12,
+  },
+  // ── Scene B ──
+  everythingLabel: {
+    color: '#A08050',
+    fontSize: 11,
+    fontFamily: 'Inter_600SemiBold',
+    letterSpacing: 4,
+    textTransform: 'uppercase',
+    marginBottom: 24,
+  },
+  featureBlock: {
+    alignItems: 'center',
+    gap: 8,
+  },
+  featureIcon: {
+    fontSize: 48,
+    marginBottom: 8,
+  },
+  featureLabel: {
+    color: TOKENS.bone,
+    fontSize: 22,
+    fontFamily: 'Inter_700Bold',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+    textAlign: 'center',
+    textShadowColor: 'rgba(220,120,20,0.4)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 20,
+  },
+  featureSub: {
+    color: TOKENS.gold,
+    fontSize: 13,
+    fontFamily: 'Inter_500Medium',
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+    textAlign: 'center',
+  },
+  dotsRow: {
+    flexDirection: 'row',
+    gap: 6,
+    marginTop: 24,
+  },
+  dot: {
+    height: 6,
+    borderRadius: 3,
+  },
+  // ── Scene C ──
+  itBadge: {
+    borderWidth: 1,
+    borderColor: 'rgba(200,160,60,0.6)',
+    paddingHorizontal: 20,
+    paddingVertical: 6,
+    borderRadius: 2,
+    marginBottom: 16,
+  },
+  itBadgeText: {
+    color: TOKENS.gold,
     fontSize: 10,
     fontFamily: 'Inter_600SemiBold',
     letterSpacing: 4,
     textTransform: 'uppercase',
-    marginBottom: 16,
-    textAlign: 'center',
   },
-  mainTitle: {
-    color: '#EDD9A3',
-    fontSize: 38,
-    fontFamily: 'Inter_700Bold',
-    letterSpacing: 1.5,
-    textAlign: 'center',
-    lineHeight: 48,
-    marginBottom: 20,
-  },
-  divider: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '75%',
-    gap: 8,
-    marginBottom: 20,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    opacity: 0.7,
-  },
-  dividerStar: {
-    color: '#C8901A',
-    fontSize: 11,
-  },
-  subtitle: {
-    color: '#907558',
-    fontSize: 13,
-    fontFamily: 'Inter_400Regular',
-    letterSpacing: 0.5,
-    textAlign: 'center',
-    lineHeight: 22,
-    marginBottom: 20,
-  },
-  editionBadge: {
-    borderWidth: 1,
-    borderColor: '#3A2010',
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    marginBottom: 36,
-  },
-  editionText: {
-    color: '#C8901A',
-    fontSize: 11,
-    fontFamily: 'Inter_600SemiBold',
+  rdr2Title: {
+    color: TOKENS.bone,
+    fontSize: 52,
+    fontFamily: 'Inter_900Black',
     letterSpacing: 2,
-    textTransform: 'uppercase',
+    textAlign: 'center',
+    textShadowColor: 'rgba(220,120,20,0.6)',
+    textShadowOffset: { width: 0, height: 4 },
+    textShadowRadius: 40,
   },
-  btnWrap: {
+  ruleGradient: {
+    width: 160,
+    height: 1,
+    marginVertical: 16,
+  },
+  tagRow: {
+    flexDirection: 'row',
+    gap: 16,
     alignItems: 'center',
-    gap: 10,
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+  },
+  tagText: {
+    color: '#A08050',
+    fontSize: 11,
+    fontFamily: 'Inter_500Medium',
+    letterSpacing: 1.5,
+    textTransform: 'uppercase',
   },
   beginBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#C8901A',
-    paddingHorizontal: 28,
-    paddingVertical: 14,
+    marginTop: 32,
+    paddingHorizontal: 32,
+    paddingVertical: 16,
+    backgroundColor: '#8B4A0A',
+    borderRadius: 3,
+    shadowColor: '#B4700A',
+    shadowOpacity: 0.5,
+    shadowRadius: 24,
+    shadowOffset: { width: 0, height: 4 },
   },
   beginBtnText: {
-    color: '#C8901A',
+    color: '#FFF',
     fontSize: 14,
     fontFamily: 'Inter_700Bold',
     letterSpacing: 3,
     textTransform: 'uppercase',
   },
   beginArrow: {
-    color: '#C8901A',
+    color: '#FFF',
     fontSize: 18,
     fontFamily: 'Inter_400Regular',
   },
@@ -490,5 +666,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontFamily: 'Inter_400Regular',
     letterSpacing: 1,
+    marginTop: 12,
   },
 });

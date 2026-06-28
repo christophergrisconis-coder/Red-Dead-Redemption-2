@@ -65,9 +65,3 @@ id = "cJji8i-HwlDrm5Rf0xRLC"
 uri = "file://artifacts/mobile/rdr2-guide-web.zip"
 type = "unspecified"
 title = "RDR2 Complete Guide — Itch.io Upload (All Chapters)"
-
-[[outputs]]
-id = "d7Z91_v_Uagpe01Hyw0Q5"
-uri = "file://artifacts/mobile/rdr2-guide-itchio.tar.gz"
-type = "unspecified"
-title = "RDR2 Guide for itch.io"
