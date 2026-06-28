@@ -45,6 +45,7 @@ export const SECTIONS = [
   { key: 'SPECIAL ITEMS', label: 'Special Items', iconName: 'star' },
   { key: 'HUNTING & FISHING', label: 'Hunting & Fishing', iconName: 'crosshair' },
   { key: 'ACTIVITIES', label: 'Activities', iconName: 'activity' },
+  { key: 'HIDEOUTS', label: 'Hideouts', iconName: 'shield' },
 ];
 
 // ─── CATEGORIES ─────────────────────────────────────────────────────────────
@@ -80,8 +81,6 @@ export const categories: Category[] = [
       mk('c1_2', 'The Aftermath of Genesis', 'Hunt food for the starving gang with Charles', 'Grizzlies West', 'Use the bow for clean kills'),
       mk('c1_3', "Who the Hell Is Leviticus Cornwall?", 'Rob Cornwall\'s oil train for money', 'O\'Creagh\'s Run', 'Blow open the safe with dynamite'),
       mk('c1_4', 'Eastward Bound', 'Break camp and ride south to New Hanover', 'Colter → Horseshoe Overlook', 'Enjoy the ride -- sets up Chapter 2'),
-      mk('c1_5', "Who the Hell Is Leviticus Cornwall?", 'Rob the train with Dutch and the gang', 'Grizzlies West', 'Board from horseback at full gallop'),
-      mk('c1_6', 'Eastward Bound', 'Break camp and ride south to New Hanover', 'Colter → Horseshoe Overlook', 'Enjoy the ride -- sets up Chapter 2'),
     ],
   },
   {
@@ -151,8 +150,6 @@ export const categories: Category[] = [
       mk('c3_14', 'Money Lending and Other Sins IV', 'Collect debt from Winton Holmes hiding near the bayou', 'Near Rhodes / Flat Iron Lake', 'He is hard to find -- check south of Rhodes near the river'),
       mk('c3_15', 'Money Lending and Other Sins V', 'Collect the final debt for Strauss before Saint Denis', 'Lagras area', 'Last debt before the Chapter 4 conscience mission'),
       mk('c3_16', 'The Fine Joys of Tobacco', 'Help Bill steal a wagon of tobacco from the Lemoyne Raiders', 'Rhodes / Scarlett Meadows', 'Stay mounted and fight off the Raiders chasing the wagon'),
-      mk('c3_17', 'Money Lending and Other Sins V', 'Collect the final debt for Strauss before Saint Denis', 'Lagras area', 'Last debt before the Chapter 4 conscience mission'),
-      mk('c3_18', 'The Battle of Shady Belle', 'Clear the Lemoyne Raiders from Shady Belle for the gang', 'Shady Belle', 'Molotovs work well on clustered enemies'),
     ],
   },
   {
@@ -227,7 +224,7 @@ export const categories: Category[] = [
       mk('c5_7', 'Icarus and Friends', 'Reunite with the gang and escape the Pinkerton ambush', 'Annesburg, New Hanover', 'Use the chaos to escape -- don\'t fight every agent'),
       mk('c5_8', "That's Murfree Country", 'Fight through Murfree Brood territory to find the cave', 'Roanoke Ridge', 'Very atmospheric -- use torch to navigate'),
       mk('c5_9', 'Fleeting Joy', 'Retrieve Jack Marston from the Pinkertons with Sadie', 'Saint Denis / Sisika', 'Rescue mission -- get Jack out fast'),
-      mk('c5_10', 'The King', 'Help a man reclaim his stolen possessions in the bayou', 'Saint Denis / Bayou', 'Short but unique stranger-style encounter'),
+      mkSQ('c5_sq1', 'The King', 'Help a man reclaim his stolen possessions in the bayou', 'Saint Denis / Bayou', 'Short but unique stranger-style encounter'),
     ],
   },
   {
@@ -1260,7 +1257,7 @@ export const categories: Category[] = [
   {
     id: 'points_of_interest',
     title: 'Points of Interest',
-    subtitle: '50 unique world discoveries -- 1 required for 100%',
+    subtitle: '46 unique world discoveries -- 1 required for 100%',
     iconName: 'map-pin',
     color: '#3A6A8A',
     section: 'SPECIAL ITEMS',
@@ -1294,6 +1291,33 @@ export const categories: Category[] = [
       mk('poi_25', 'Washed-Up Pirate Chest (Empty)', 'An empty chest washed ashore with a unique history', 'San Luis River bank, New Austin'),
       mk('poi_26', 'The Viking Settlement', 'Ancient Viking ruin hidden in New Hanover', 'North of Annesburg, Roanoke Ridge', 'Contains Viking helmet, longboat carvings, and the Viking Hatchet'),
       mk('poi_27', 'Petrified Man in Swamp', 'A man turned to stone found in the bayou', 'Bayou Nwa, Lemoyne', 'Standing upright -- very strange sight'),
+    ],
+  },
+  {
+    id: 'event_areas',
+    title: 'Event Areas',
+    subtitle: '6 evolving locations across 5 stages -- visit periodically',
+    iconName: 'sun',
+    color: '#6A4A3A',
+    section: 'SPECIAL ITEMS',
+    requiredFor100: true,
+    items: [
+      mk('ea_0', '★ HOW TO FIND -- Event Areas', 'Event areas have 5 stages of development that advance as you progress. Visit each location at regular intervals to witness changes. Stage 5 (Epilogue 1) shows the final form. All events enter their last stage when you reach Epilogue 1 regardless of prior visits.', 'Various (see below)', 'Visit repeatedly across chapters. Most stages only trigger at certain story points.'),
+      mk('ea_1', 'Appleseed Timber Co. -- Stage 1', 'Northeast of Strawberry. The timber company is clearing the forest with workers, saws, and wagons.', 'Northeast of Strawberry, West Elizabeth', 'Visit early in the game. The operation is in full swing.'),
+      mk('ea_2', 'Appleseed Timber Co. -- Stage 2', 'The workers have advanced deeper into the forest. More clearing visible.', 'Northeast of Strawberry, West Elizabeth', 'Visit after Chapter 2 progresses.'),
+      mk('ea_3', 'Appleseed Timber Co. -- Stage 3', 'Deforestation is nearly complete. Stumps and debris remain.', 'Northeast of Strawberry, West Elizabeth', 'Visit mid-game.'),
+      mk('ea_4', 'Appleseed Timber Co. -- Stage 4', 'The land is mostly cleared. Workers are packing up.', 'Northeast of Strawberry, West Elizabeth', 'Visit late in the main story.'),
+      mk('ea_5', 'Appleseed Timber Co. -- Stage 5 (Epilogue 1)', 'The entire area is stripped bare. No workers remain -- just the ruined landscape.', 'Northeast of Strawberry, West Elizabeth', 'Visit in Epilogue 1 for the final state.'),
+      mk('ea_6', 'Castor\'s Ridge -- Stage 1', 'Southwest of Valentine. A father and two sons are building a cabin. Foundations laid with tents nearby.', 'Southwest of Valentine, New Hanover', 'Early game -- help the family for unique dialogue.'),
+      mk('ea_7', 'Castor\'s Ridge -- Stage 2', 'The cabin frame is up. The sons accidentally drop a wall section.', 'Southwest of Valentine, New Hanover', 'Visit after some chapter progress.'),
+      mk('ea_8', 'Castor\'s Ridge -- Stage 3', 'The cabin is nearly complete. The father offers a reward if you help.', 'Southwest of Valentine, New Hanover', 'Mid-game visit.'),
+      mk('ea_9', 'Castor\'s Ridge -- Stage 4', 'The cabin is finished. The family invites you inside.', 'Southwest of Valentine, New Hanover', 'Late main story.'),
+      mk('ea_10', 'Castor\'s Ridge -- Stage 5 (Epilogue 1)', 'The cabin now has occupants and a vegetable garden. Fully settled.', 'Southwest of Valentine, New Hanover', 'Epilogue 1 final state.'),
+      mk('ea_11', 'Central Union Railroad Camp -- Stage 1', 'Halfway between Emerald Station and Van Horn. Railroad workers laying track with a foreman.', 'Between Emerald Station and Van Horn, New Hanover', 'Speak to Percy Whiteshade, the senior foreman.'),
+      mk('ea_12', 'Central Union Railroad Camp -- Stage 2', 'The camp has moved north. Track laid further along the line.', 'North of original position, New Hanover', 'Track progress visible.'),
+      mk('ea_13', 'Central Union Railroad Camp -- Stage 3', 'The track reaches Emerald Station. Percy offers rewards.', 'Near Emerald Station, New Hanover', 'Collect any provisions offered.'),
+      mk('ea_14', 'Central Union Railroad Camp -- Stage 4', 'The camp is almost gone. Final sections of track being finished.', 'Near Emerald Station, New Hanover', 'Late main story.'),
+      mk('ea_15', 'Central Union Railroad Camp -- Stage 5 (Epilogue 1)', 'The railroad is complete. Workers and camp are gone entirely.', 'Near Emerald Station, New Hanover', 'Epilogue 1 final state -- nothing remains.'),
     ],
   },
 
@@ -1491,6 +1515,35 @@ export const categories: Category[] = [
       mk('aa_14', 'Complete a horse breaking challenge', 'Tame a wild horse in the wilderness', 'Wild horse herds -- various areas', 'Keep still and soothe the horse to calm it'),
       mk('aa_15', 'Win a horse race (stranger-initiated)', 'Beat an NPC in a spontaneous race challenge', 'Various roads', 'Strangers occasionally challenge you -- accept and win'),
       mk('aa_16', 'Visit the travelling carnival or circus', 'Participate in carnival activities', 'Emerald Ranch traveling fair area', 'Appears periodically -- check the area after Ch. 2'),
+    ],
+  },
+
+  // ══════════════════════════════════════════════════════
+  //  HIDEOUTS
+  // ══════════════════════════════════════════════════════
+  {
+    id: 'gang_hideouts',
+    title: 'Gang Hideouts',
+    subtitle: 'Clearable camps & strongholds -- unique loot & enemies',
+    iconName: 'shield',
+    color: '#6A2A2A',
+    section: 'HIDEOUTS',
+    requiredFor100: false,
+    items: [
+      mk('gh_0', '★ HOW TO CLEAR -- Gang Hideouts', 'Gang hideouts are enemy camps that can be cleared for loot, weapons, and satisfaction. Each has unique enemies and environmental storytelling. Clear all enemies to "complete" the hideout. Many have hidden safes, lockboxes, and collectibles.', 'Various (see list)', 'Approach quietly for stealth advantage, or go loud with dynamite. Always loot thoroughly after clearing.'),
+      mk('gh_1', 'O\'Driscoll Boys -- Hanging Dog Ranch', 'The O\'Driscoll stronghold in West Elizabeth. Heavily fortified with multiple buildings and guards.', 'Hanging Dog Ranch, West Elizabeth', 'Multiple entry points. The cabin at the back holds a safe.'),
+      mk('gh_2', 'O\'Driscoll Boys -- Six Point Cabin', 'A remote O\'Driscoll cabin in the Grizzlies. Smaller but still dangerous.', 'Grizzlies West, Ambarino', 'Use the terrain for cover -- limited visibility in snow.'),
+      mk('gh_3', 'O\'Driscoll Boys -- Colter Camp (Prologue)', 'The original O\'Driscoll camp ambushed in the prologue.', 'Colter, Ambarino', 'Already cleared during story -- revisit for missed loot.'),
+      mk('gh_4', 'Lemoyne Raiders -- Shady Belle', 'The Lemoyne Raiders\' main camp before the gang takes it. Clear it for the story.', 'Shady Belle, Lemoyne', 'Cleared during Chapter 3 story -- check for missed items.'),
+      mk('gh_5', 'Lemoyne Raiders -- Fort Brennan (Abandoned)', 'An abandoned fort the Raiders briefly occupy. Check for any stragglers.', 'Near Rhodes, Lemoyne', 'May not always be populated -- check at night.'),
+      mk('gh_6', 'Murfree Brood -- Beaver Hollow', 'The Murfree Brood cave stronghold. Extremely dangerous and atmospheric.', 'Beaver Hollow, Roanoke Ridge', 'Use a torch. The cave is dark and the Murfrees ambush from shadows.'),
+      mk('gh_7', 'Murfree Brood -- Butcher Creek', 'The Murfree-controlled settlement. Hostile territory.', 'Butcher Creek, Roanoke Ridge', 'Clear carefully -- civilians may be present.'),
+      mk('gh_8', 'Skinner Brothers -- Twin Rocks', 'The Skinner Brothers\' camp in Tall Trees. Available in the Epilogue.', 'Twin Rocks, Tall Trees, West Elizabeth', 'Epilogue only. The Skinners are brutal -- be prepared.'),
+      mk('gh_9', 'Skinner Brothers -- Manzanita Post', 'Another Skinner camp near Manzanita Post. High danger.', 'Near Manzanita Post, Tall Trees', 'Epilogue only. Bring a good rifle.'),
+      mk('gh_10', 'Del Lobo Gang -- Thieves\' Landing', 'The Del Lobos control Thieves\' Landing in New Austin.', "Thieves' Landing, New Austin", 'Epilogue only. A classic Western showdown location.'),
+      mk('gh_11', 'Del Lobo Gang -- Fort Mercer', 'The Del Lobos occupy Fort Mercer. Large-scale battle.', 'Fort Mercer, Rio Bravo, New Austin', 'Epilogue only. The fort has multiple levels of enemies.'),
+      mk('gh_12', 'Night Folk -- Lagras / Bayou Nwa', 'The Night Folk are a mysterious, supernatural-feeling group in the bayou. Not a traditional hideout but worth clearing.', 'Lagras and Bayou Nwa, Lemoyne', 'Only appear at night. They move silently -- use Eagle Eye constantly.'),
+      mk('gh_13', 'Night Folk -- Bluewater Marsh', 'Another Night Folk concentration in the eastern marsh.', 'Bluewater Marsh, Lemoyne', 'Night only. Extremely creepy -- bring nerves of steel.'),
     ],
   },
 ];
