@@ -1,0 +1,1 @@
+- [Mobile screenshot verification gate](mobile-screenshot-verification.md) — the WelcomeScene intro overlay blocks screenshots of inner routes; temporarily disable it in `_layout.tsx`, screenshot, then revert.

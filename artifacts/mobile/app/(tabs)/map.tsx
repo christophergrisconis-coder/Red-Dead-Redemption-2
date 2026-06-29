@@ -13,36 +13,41 @@ import {
 import Svg, {
   Circle,
   G,
+  Image as SvgImage,
   Path,
-  Rect,
-  Text as SvgText,
 } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColors } from '@/hooks/useColors';
 
-const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
-const MAP_W = 800;
-const MAP_H = 1000;
+/* Real RDR2 atlas map bundled with the app (offline-first) */
+const MAP_IMAGE = require('../../assets/images/rdr2-map.jpg');
 
-/* The SVG fills this viewport area — viewBox handles coordinate scaling automatically */
-const HEADER_H = 80;
-const TABBAR_H = 80;
-const SVG_W = SCREEN_W;
-const SVG_H = Math.max(200, SCREEN_H - HEADER_H - TABBAR_H);
+const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
+
+/* Natural pixel size of the bundled map image */
+const IMG_W = 1000;
+const IMG_H = 753;
+
+const HEADER_H = 110;
+const TABBAR_H = 90;
+const AVAIL_W = SCREEN_W;
+const AVAIL_H = Math.max(240, SCREEN_H - HEADER_H - TABBAR_H);
+
+/* Scale that fits the whole landscape map inside the viewport */
+const FIT = Math.min(AVAIL_W / IMG_W, AVAIL_H / IMG_H);
+const RENDER_W = IMG_W * FIT;
+const RENDER_H = IMG_H * FIT;
+/* viewBox units per rendered screen pixel at base zoom */
+const VB_PER_PX = IMG_W / RENDER_W;
 
 /* ─── Map Layers ─── */
-type LayerKey = 'towns' | 'collectibles' | 'hunting' | 'treasure' | 'graves' | 'hideouts';
+type LayerKey = 'towns';
 
 const LAYERS: { key: LayerKey; label: string; color: string }[] = [
-  { key: 'towns', label: 'Towns', color: '#C8922A' },
-  { key: 'collectibles', label: 'Collectibles', color: '#8A6A3A' },
-  { key: 'hunting', label: 'Hunting', color: '#5F7D5F' },
-  { key: 'treasure', label: 'Treasure', color: '#D4A017' },
-  { key: 'graves', label: 'Graves', color: '#5A4A6A' },
-  { key: 'hideouts', label: 'Hideouts', color: '#6A2A2A' },
+  { key: 'towns', label: 'Towns', color: '#9B2226' },
 ];
 
-/* ─── Town / Point markers ─── */
+/* ─── Town markers, positioned on the real map (0..IMG_W / 0..IMG_H) ─── */
 interface MapPoint {
   x: number;
   y: number;
@@ -52,117 +57,19 @@ interface MapPoint {
 }
 
 const MARKERS: MapPoint[] = [
-  // ── Towns ──
-  { x: 420, y: 180, label: 'Colter', type: 'towns' },
-  { x: 460, y: 310, label: 'Valentine', type: 'towns' },
-  { x: 510, y: 260, label: 'Emerald Ranch', type: 'towns' },
-  { x: 380, y: 370, label: 'Strawberry', type: 'towns' },
-  { x: 580, y: 430, label: 'Rhodes', type: 'towns' },
-  { x: 650, y: 520, label: 'Saint Denis', type: 'towns' },
-  { x: 720, y: 320, label: 'Van Horn', type: 'towns' },
-  { x: 700, y: 220, label: 'Annesburg', type: 'towns' },
-  { x: 180, y: 450, label: 'Blackwater', type: 'towns' },
-  { x: 120, y: 620, label: 'Tumbleweed', type: 'towns' },
-  { x: 220, y: 580, label: 'Armadillo', type: 'towns' },
-  { x: 460, y: 470, label: 'Shady Belle', type: 'towns' },
-  { x: 430, y: 240, label: 'Horseshoe Overlook', type: 'towns' },
-  { x: 540, y: 380, label: 'Clemens Point', type: 'towns' },
-  { x: 650, y: 330, label: 'Lagras', type: 'towns' },
-  { x: 180, y: 380, label: 'Owanjila', type: 'towns' },
-  // ── Collectibles ──
-  { x: 400, y: 160, label: 'Viking Settlement', type: 'collectibles', note: 'Viking Helmet & Hatchet' },
-  { x: 580, y: 300, label: 'Meteor House', type: 'collectibles', note: 'Meteorite Fragment' },
-  { x: 460, y: 400, label: 'Strange Statues', type: 'collectibles', note: 'Cave puzzle — 3 gold bars' },
-  { x: 300, y: 260, label: 'Window Rock', type: 'collectibles', note: 'Rock Carving & POI' },
-  { x: 670, y: 450, label: 'Serial Killer Cabin', type: 'collectibles', note: 'Edmund Lowry Jr.' },
-  { x: 500, y: 500, label: 'Elysian Pool', type: 'collectibles', note: 'Poisonous Trail cave' },
-  // ── Hunting ──
-  { x: 340, y: 140, label: 'Legendary Bharati Bear', type: 'hunting', note: 'Grizzlies East' },
-  { x: 220, y: 350, label: 'Legendary Buck', type: 'hunting', note: 'Big Valley' },
-  { x: 620, y: 540, label: 'Legendary Bullgator', type: 'hunting', note: 'Bayou Nwa' },
-  { x: 160, y: 660, label: 'Legendary Cougar', type: 'hunting', note: 'Gaptooth Ridge' },
-  { x: 480, y: 320, label: 'Legendary White Bison', type: 'hunting', note: 'Lake Isabella' },
-  // ── Treasure ──
-  { x: 480, y: 280, label: 'Jack Hall Gang', type: 'treasure', note: 'Caliban\'s Seat start' },
-  { x: 360, y: 100, label: 'High Stakes', type: 'treasure', note: 'Cumberland Falls start' },
-  { x: 500, y: 540, label: 'Poisonous Trail', type: 'treasure', note: 'Flat Iron Lake cave' },
-  { x: 140, y: 550, label: 'Landmarks of Riches', type: 'treasure', note: 'Twin Stack Pass start' },
-  // ── Graves ──
-  { x: 420, y: 170, label: 'Jenny Kirk', type: 'graves', note: 'Spider Gorge' },
-  { x: 710, y: 230, label: 'Davey Callander', type: 'graves', note: 'Colter churchyard' },
-  { x: 460, y: 300, label: 'Sean MacGuire', type: 'graves', note: 'NW of Rhodes' },
-  { x: 520, y: 460, label: 'Kieran Duffy', type: 'graves', note: 'Shady Belle meadows' },
-  { x: 640, y: 540, label: 'Hosea & Lenny', type: 'graves', note: 'Bluewater Marsh' },
-  { x: 550, y: 410, label: 'Susan Grimshaw', type: 'graves', note: 'SW of Elysian Pool' },
-  { x: 400, y: 130, label: 'Eagle Flies', type: 'graves', note: 'Donner Falls cliff' },
-  { x: 360, y: 100, label: 'Arthur Morgan', type: 'graves', note: 'Northeast of Bacchus Station' },
-  // ── Hideouts ──
-  { x: 340, y: 280, label: 'Hanging Dog Ranch', type: 'hideouts', note: "O'Driscoll Boys" },
-  { x: 460, y: 470, label: 'Shady Belle', type: 'hideouts', note: 'Lemoyne Raiders' },
-  { x: 540, y: 350, label: 'Beaver Hollow', type: 'hideouts', note: 'Murfree Brood' },
-  { x: 700, y: 250, label: 'Butcher Creek', type: 'hideouts', note: 'Murfree Brood' },
-  { x: 180, y: 410, label: 'Twin Rocks', type: 'hideouts', note: 'Skinner Brothers (Epilogue)' },
-  { x: 140, y: 540, label: 'Fort Mercer', type: 'hideouts', note: 'Del Lobo Gang (Epilogue)' },
-  { x: 650, y: 560, label: 'Lagras', type: 'hideouts', note: 'Night Folk -- night only' },
+  { x: 598, y: 108, label: 'Colter', type: 'towns', note: "Ch.1 snowy start — Dutch's gang camp" },
+  { x: 566, y: 248, label: 'Valentine', type: 'towns', note: 'Ch.2 hub — saloon, doctor, stable, gunsmith' },
+  { x: 452, y: 300, label: 'Wallace Station', type: 'towns', note: 'West Elizabeth rail station' },
+  { x: 470, y: 350, label: 'Strawberry', type: 'towns', note: 'Mountain town — hotel & general store' },
+  { x: 545, y: 420, label: 'Blackwater', type: 'towns', note: 'Off-limits until the Epilogue — bounty if entered early' },
+  { x: 350, y: 527, label: 'Armadillo', type: 'towns', note: 'New Austin (Epilogue) — cholera-struck town' },
+  { x: 160, y: 568, label: 'Tumbleweed', type: 'towns', note: 'Far-west frontier town (Epilogue)' },
+  { x: 690, y: 282, label: 'Emerald Ranch', type: 'towns', note: 'Central ranch — fence & horse trading' },
+  { x: 800, y: 425, label: 'Rhodes', type: 'towns', note: 'Lemoyne — Gray vs Braithwaite feud' },
+  { x: 882, y: 405, label: 'Saint Denis', type: 'towns', note: 'Largest city — tailor, bank, theatre, trapper' },
+  { x: 912, y: 258, label: 'Van Horn', type: 'towns', note: 'Grimy eastern trading post' },
+  { x: 888, y: 188, label: 'Annesburg', type: 'towns', note: 'Northeast coal-mining town' },
 ];
-
-/* ─── SVG Terrain ─── */
-function WorldMap() {
-  return (
-    <G>
-      {/* Background / parchment */}
-      <Rect x={0} y={0} width={MAP_W} height={MAP_H} fill="#C9B99A" />
-
-      {/* ── Region fills ── */}
-      {/* Ambarino (north) — cold, pale */}
-      <Path d="M 0,0 L 800,0 L 800,220 L 650,240 L 500,200 L 350,180 L 200,210 L 0,180 Z" fill="#B0C4B1" opacity={0.35} />
-      {/* New Hanover (east-center) — heartland green */}
-      <Path d="M 200,210 L 350,180 L 500,200 L 650,240 L 720,320 L 680,420 L 580,430 L 500,400 L 400,380 L 300,340 L 220,320 Z" fill="#7A9B6A" opacity={0.25} />
-      {/* Lemoyne (south-east) — warm, swampy */}
-      <Path d="M 400,380 L 500,400 L 580,430 L 680,420 L 750,500 L 720,650 L 600,700 L 480,650 L 420,550 Z" fill="#8B7355" opacity={0.2} />
-      {/* West Elizabeth (west) — forest */}
-      <Path d="M 0,180 L 200,210 L 220,320 L 300,340 L 350,420 L 320,520 L 200,550 L 100,520 L 0,480 Z" fill="#5F7D5F" opacity={0.25} />
-      {/* New Austin (south-west) — desert */}
-      <Path d="M 0,480 L 100,520 L 200,550 L 320,520 L 350,650 L 280,750 L 150,780 L 0,760 Z" fill="#C9A86C" opacity={0.25} />
-
-      {/* ── Rivers ── */}
-      <Path d="M 350,0 C 340,80 360,140 330,200 C 300,260 340,320 310,380 C 280,440 320,500 290,560 C 260,620 300,680 280,750" stroke="#4A5D6E" strokeWidth={7} fill="none" opacity={0.7} />
-      <Path d="M 700,0 C 680,80 720,160 690,240 C 660,320 700,380 670,460 C 640,540 680,620 650,700 C 620,780 660,860 640,1000" stroke="#4A5D6E" strokeWidth={8} fill="none" opacity={0.7} />
-      <Path d="M 0,300 C 100,280 180,320 220,350 C 280,380 320,360 380,400 C 450,440 500,420 550,450 C 620,490 680,470 750,500 C 800,520 800,540 800,560" stroke="#4A5D6E" strokeWidth={6} fill="none" opacity={0.6} />
-      <Path d="M 0,600 C 80,580 160,620 220,650 C 300,690 380,660 450,700 C 520,740 580,720 650,750 C 720,780 780,760 800,780" stroke="#4A5D6E" strokeWidth={5} fill="none" opacity={0.5} />
-
-      {/* ── Lakes ── */}
-      <Path d="M 250,350 C 300,330 340,360 320,400 C 290,440 230,420 220,380 Z" fill="#4A5D6E" opacity={0.6} />
-      <Path d="M 430,250 C 480,230 520,260 500,300 C 470,340 410,320 400,280 Z" fill="#4A5D6E" opacity={0.55} />
-      <Path d="M 550,480 C 600,460 650,490 630,540 C 590,580 530,560 520,520 Z" fill="#4A5D6E" opacity={0.55} />
-      <Path d="M 150,400 C 190,380 230,410 210,450 C 170,480 120,460 110,420 Z" fill="#4A5D6E" opacity={0.5} />
-
-      {/* ── Major Roads ── */}
-      <Path d="M 460,310 L 510,260 L 580,260 L 650,320 L 720,320" stroke="#8B7355" strokeWidth={3} fill="none" opacity={0.5} />
-      <Path d="M 460,310 L 430,370 L 380,370" stroke="#8B7355" strokeWidth={3} fill="none" opacity={0.5} />
-      <Path d="M 460,310 L 430,240 L 420,180" stroke="#8B7355" strokeWidth={3} fill="none" opacity={0.5} />
-      <Path d="M 580,430 L 650,520 L 700,520" stroke="#8B7355" strokeWidth={3} fill="none" opacity={0.5} />
-      <Path d="M 180,450 L 180,380 L 220,320 L 220,260" stroke="#8B7355" strokeWidth={3} fill="none" opacity={0.5} />
-      <Path d="M 180,450 L 120,550 L 120,620" stroke="#8B7355" strokeWidth={3} fill="none" opacity={0.5} />
-      <Path d="M 650,520 L 750,500 L 800,500" stroke="#8B7355" strokeWidth={3} fill="none" opacity={0.5} />
-
-      {/* ── Region Labels ── */}
-      <SvgText x={520} y={100} fill="#3E3025" fontSize={18} fontFamily="Inter_700Bold" opacity={0.4} textAnchor="middle">AMBARINO</SvgText>
-      <SvgText x={480} y={290} fill="#3E3025" fontSize={18} fontFamily="Inter_700Bold" opacity={0.4} textAnchor="middle">NEW HANOVER</SvgText>
-      <SvgText x={580} y={580} fill="#3E3025" fontSize={18} fontFamily="Inter_700Bold" opacity={0.4} textAnchor="middle">LEMOYNE</SvgText>
-      <SvgText x={180} y={440} fill="#3E3025" fontSize={18} fontFamily="Inter_700Bold" opacity={0.4} textAnchor="middle">WEST ELIZABETH</SvgText>
-      <SvgText x={180} y={680} fill="#3E3025" fontSize={18} fontFamily="Inter_700Bold" opacity={0.4} textAnchor="middle">NEW AUSTIN</SvgText>
-
-      {/* ── Grid lines (subtle) ── */}
-      {[100, 200, 300, 400, 500, 600, 700].map(n => (
-        <G key={`g${n}`}>
-          <Path d={`M ${n},0 L ${n},1000`} stroke="#3E3025" strokeWidth={0.5} opacity={0.08} />
-          <Path d={`M 0,${n} L 800,${n}`} stroke="#3E3025" strokeWidth={0.5} opacity={0.08} />
-        </G>
-      ))}
-    </G>
-  );
-}
 
 /* ─── Drawn path helpers ─── */
 interface DrawnPath {
@@ -200,16 +107,14 @@ export default function MapScreen() {
   const [paths, setPaths] = useState<DrawnPath[]>([]);
   const currentPoints = useRef<{ x: number; y: number }[]>([]);
 
-  /* Pan / Zoom state — SVG viewBox already fits, scale starts at 1 */
+  /* Pan / Zoom — the image is pre-fit, so base scale = 1 */
   const scale = useRef(new Animated.Value(1)).current;
   const translateX = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(0)).current;
   const lastScale = useRef(1);
   const lastTranslate = useRef({ x: 0, y: 0 });
-  const pinchStartDist = useRef(0);
 
   const topInset = Platform.OS === 'web' ? 67 : insets.top;
-  const bottomInset = Platform.OS === 'web' ? 34 : 0;
 
   const toggleLayer = useCallback((key: LayerKey) => {
     setActiveLayers(prev => {
@@ -223,19 +128,24 @@ export default function MapScreen() {
   const undoLast = () => setPaths(prev => prev.slice(0, -1));
   const clearAll = () => setPaths([]);
 
-  /* ── PanResponder for panning ── */
   const panStart = useRef({ x: 0, y: 0 });
 
+  /* Touch -> viewBox coordinates. locationX/Y are in the map view's own
+     (pre-transform) coordinate space, so a single scale factor maps them. */
+  const toViewBox = (locX: number, locY: number) => ({
+    x: locX * VB_PER_PX,
+    y: locY * VB_PER_PX,
+  });
+
   const onTouchStart = (e: any) => {
+    const ne = e.nativeEvent;
     if (drawMode) {
-      const touch = e.nativeEvent.changedTouches[0];
-      if (!touch) return;
-      currentPoints.current = [{ x: touch.pageX, y: touch.pageY - topInset - 70 }];
+      const p = toViewBox(ne.locationX, ne.locationY);
+      currentPoints.current = [p];
       setPaths(prev => [...prev, { d: buildPathD(currentPoints.current), color: penColor, size: penSize }]);
       return;
     }
-    const t = e.nativeEvent.changedTouches[0];
-    if (!t) return;
+    const t = ne.changedTouches?.[0] ?? ne;
     panStart.current = { x: t.pageX, y: t.pageY };
     lastTranslate.current = {
       x: (translateX as any).__getValue(),
@@ -244,10 +154,10 @@ export default function MapScreen() {
   };
 
   const onTouchMove = (e: any) => {
+    const ne = e.nativeEvent;
     if (drawMode) {
-      const touch = e.nativeEvent.changedTouches[0];
-      if (!touch) return;
-      currentPoints.current.push({ x: touch.pageX, y: touch.pageY - topInset - 70 });
+      const p = toViewBox(ne.locationX, ne.locationY);
+      currentPoints.current.push(p);
       const d = buildPathD(currentPoints.current);
       setPaths(prev => {
         const next = [...prev];
@@ -256,8 +166,7 @@ export default function MapScreen() {
       });
       return;
     }
-    const t = e.nativeEvent.changedTouches[0];
-    if (!t) return;
+    const t = ne.changedTouches?.[0] ?? ne;
     const dx = t.pageX - panStart.current.x;
     const dy = t.pageY - panStart.current.y;
     translateX.setValue(lastTranslate.current.x + dx);
@@ -277,12 +186,12 @@ export default function MapScreen() {
 
   /* ── Zoom helpers ── */
   const zoomIn = () => {
-    const next = Math.min(lastScale.current * 1.3, 4);
+    const next = Math.min(lastScale.current * 1.3, 5);
     lastScale.current = next;
     Animated.spring(scale, { toValue: next, useNativeDriver: true, friction: 8 }).start();
   };
   const zoomOut = () => {
-    const next = Math.max(lastScale.current / 1.3, 0.5);
+    const next = Math.max(lastScale.current / 1.3, 1);
     lastScale.current = next;
     Animated.spring(scale, { toValue: next, useNativeDriver: true, friction: 8 }).start();
   };
@@ -296,7 +205,6 @@ export default function MapScreen() {
     ]).start();
   };
 
-  /* ── Visible markers ── */
   const visibleMarkers = MARKERS.filter(m => activeLayers.has(m.type));
 
   /* ── Render ── */
@@ -326,7 +234,7 @@ export default function MapScreen() {
             >
               <Feather name="edit-2" size={15} color={drawMode ? '#fff' : colors.mutedForeground} />
               <Text style={[styles.drawToggleText, { color: drawMode ? '#fff' : colors.mutedForeground }]}>
-                {drawMode ? 'Draw' : 'Draw'}
+                Draw
               </Text>
             </Pressable>
             <Pressable
@@ -340,56 +248,48 @@ export default function MapScreen() {
       </View>
 
       {/* Map Viewport */}
-      <View
-        style={styles.mapViewport}
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
-      >
+      <View style={styles.mapViewport}>
         <Animated.View
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
           style={{
+            width: RENDER_W,
+            height: RENDER_H,
             transform: [
               { translateX },
               { translateY },
               { scale },
             ],
-            width: SVG_W,
-            height: SVG_H,
           }}
         >
-          <Svg width={SVG_W} height={SVG_H} viewBox={`0 0 ${MAP_W} ${MAP_H}`}>
-            <WorldMap />
+          <Svg width={RENDER_W} height={RENDER_H} viewBox={`0 0 ${IMG_W} ${IMG_H}`}>
+            <SvgImage
+              x={0}
+              y={0}
+              width={IMG_W}
+              height={IMG_H}
+              href={MAP_IMAGE}
+              preserveAspectRatio="xMidYMid meet"
+            />
 
-            {/* Markers */}
+            {/* Town markers */}
             {visibleMarkers.map((m, i) => {
-              const layerColor = LAYERS.find(l => l.key === m.type)?.color || '#C8922A';
+              const layerColor = LAYERS.find(l => l.key === m.type)?.color || '#9B2226';
               return (
                 <G key={`${m.label}-${i}`}>
-                  <Circle
-                    cx={m.x}
-                    cy={m.y}
-                    r={12}
-                    fill="transparent"
-                    onPress={() => setSelectedPoint(m)}
-                  />
-                  <Circle
-                    cx={m.x}
-                    cy={m.y}
-                    r={8}
-                    fill={layerColor}
-                    opacity={0.9}
-                  />
-                  <Circle cx={m.x} cy={m.y} r={4} fill="#fff" opacity={0.8} />
-                  <SvgText
-                    x={m.x + 14}
-                    y={m.y + 4}
-                    fill="#2A1F15"
-                    fontSize={11}
-                    fontFamily="Inter_600SemiBold"
-                    opacity={0.9}
-                  >
-                    {m.label}
-                  </SvgText>
+                  {!drawMode && (
+                    <Circle
+                      cx={m.x}
+                      cy={m.y}
+                      r={18}
+                      fill="transparent"
+                      onPress={() => setSelectedPoint(m)}
+                    />
+                  )}
+                  <Circle cx={m.x} cy={m.y} r={9} fill="#FBF3DD" opacity={0.95} />
+                  <Circle cx={m.x} cy={m.y} r={6.5} fill={layerColor} />
+                  <Circle cx={m.x} cy={m.y} r={2.5} fill="#FBF3DD" />
                 </G>
               );
             })}
@@ -400,7 +300,7 @@ export default function MapScreen() {
                 key={i}
                 d={p.d}
                 stroke={p.color}
-                strokeWidth={p.size / (lastScale.current || 1)}
+                strokeWidth={(p.size * VB_PER_PX) / (lastScale.current || 1)}
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 fill="none"
@@ -540,6 +440,8 @@ const styles = StyleSheet.create({
   mapViewport: {
     flex: 1,
     overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: '#2A1F15',
   },
   drawToggle: {
