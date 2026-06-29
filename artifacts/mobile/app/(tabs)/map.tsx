@@ -24,6 +24,12 @@ const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
 const MAP_W = 800;
 const MAP_H = 1000;
 
+/* The SVG fills this viewport area — viewBox handles coordinate scaling automatically */
+const HEADER_H = 80;
+const TABBAR_H = 80;
+const SVG_W = SCREEN_W;
+const SVG_H = Math.max(200, SCREEN_H - HEADER_H - TABBAR_H);
+
 /* ─── Map Layers ─── */
 type LayerKey = 'towns' | 'collectibles' | 'hunting' | 'treasure' | 'graves' | 'hideouts';
 
@@ -194,7 +200,7 @@ export default function MapScreen() {
   const [paths, setPaths] = useState<DrawnPath[]>([]);
   const currentPoints = useRef<{ x: number; y: number }[]>([]);
 
-  /* Pan / Zoom state */
+  /* Pan / Zoom state — SVG viewBox already fits, scale starts at 1 */
   const scale = useRef(new Animated.Value(1)).current;
   const translateX = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(0)).current;
@@ -276,7 +282,7 @@ export default function MapScreen() {
     Animated.spring(scale, { toValue: next, useNativeDriver: true, friction: 8 }).start();
   };
   const zoomOut = () => {
-    const next = Math.max(lastScale.current / 1.3, 0.6);
+    const next = Math.max(lastScale.current / 1.3, 0.5);
     lastScale.current = next;
     Animated.spring(scale, { toValue: next, useNativeDriver: true, friction: 8 }).start();
   };
@@ -347,11 +353,11 @@ export default function MapScreen() {
               { translateY },
               { scale },
             ],
-            width: MAP_W,
-            height: MAP_H,
+            width: SVG_W,
+            height: SVG_H,
           }}
         >
-          <Svg width={MAP_W} height={MAP_H} viewBox={`0 0 ${MAP_W} ${MAP_H}`}>
+          <Svg width={SVG_W} height={SVG_H} viewBox={`0 0 ${MAP_W} ${MAP_H}`}>
             <WorldMap />
 
             {/* Markers */}
