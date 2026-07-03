@@ -230,7 +230,11 @@ export default function MapScreen() {
     const ref = point.guideRef;
     if (!ref) return;
     setTimeout(() => {
-      router.push(ref.tab as any);
+      if (ref.type === 'category') {
+        router.push(`/category/${ref.categoryId}` as any);
+      } else {
+        router.push('/(tabs)/walkthrough' as any);
+      }
     }, 240);
   };
 
