@@ -174,7 +174,7 @@ export const MARKERS: MapPoint[] = [
   // ── LEGENDARY ANIMALS ──────────────────────────────────────────────────────
 
   {
-    x: 618, y: 165,
+    x: 672, y: 178,
     label: 'Legendary Grizzly Bear',
     category: 'legendary',
     region: 'Ambarino — Grizzlies East',
@@ -185,7 +185,7 @@ export const MARKERS: MapPoint[] = [
   },
 
   {
-    x: 340, y: 128,
+    x: 348, y: 118,
     label: 'Legendary White Bison',
     category: 'legendary',
     region: 'Ambarino — Lake Isabella',
@@ -196,7 +196,7 @@ export const MARKERS: MapPoint[] = [
   },
 
   {
-    x: 474, y: 158,
+    x: 472, y: 132,
     label: 'Legendary Wolf',
     category: 'legendary',
     region: 'Ambarino — Cotorra Springs',
@@ -207,7 +207,7 @@ export const MARKERS: MapPoint[] = [
   },
 
   {
-    x: 820, y: 192,
+    x: 808, y: 215,
     label: 'Legendary Moose',
     category: 'legendary',
     region: 'Roanoke Ridge — Brandywine Drop',
@@ -218,7 +218,7 @@ export const MARKERS: MapPoint[] = [
   },
 
   {
-    x: 876, y: 512,
+    x: 855, y: 482,
     label: 'Legendary Alligator',
     category: 'legendary',
     region: 'Lemoyne — Bayou Nwa',
@@ -229,7 +229,7 @@ export const MARKERS: MapPoint[] = [
   },
 
   {
-    x: 773, y: 498,
+    x: 755, y: 468,
     label: 'Legendary Panther',
     category: 'legendary',
     region: 'Lemoyne — Scarlett Meadows',
@@ -242,7 +242,7 @@ export const MARKERS: MapPoint[] = [
   // ── GANG HIDEOUTS ──────────────────────────────────────────────────────────
 
   {
-    x: 430, y: 232,
+    x: 420, y: 228,
     label: 'Hanging Dog Ranch',
     category: 'hideouts',
     region: 'New Hanover — West Grizzlies',
@@ -253,7 +253,7 @@ export const MARKERS: MapPoint[] = [
   },
 
   {
-    x: 544, y: 218,
+    x: 618, y: 205,
     label: 'Six Point Cabin',
     category: 'hideouts',
     region: 'New Hanover — Grizzlies',
@@ -264,7 +264,7 @@ export const MARKERS: MapPoint[] = [
   },
 
   {
-    x: 858, y: 456,
+    x: 848, y: 458,
     label: 'Shady Belle',
     category: 'hideouts',
     region: 'Lemoyne — Bayou Nwa',
@@ -275,7 +275,7 @@ export const MARKERS: MapPoint[] = [
   },
 
   {
-    x: 558, y: 462,
+    x: 562, y: 468,
     label: 'Thieves\' Landing',
     category: 'hideouts',
     region: 'West Elizabeth — Flat Iron Lake',
@@ -286,7 +286,7 @@ export const MARKERS: MapPoint[] = [
   },
 
   {
-    x: 585, y: 360,
+    x: 552, y: 345,
     label: 'Flat Iron Lake O\'Driscoll Camp',
     category: 'hideouts',
     region: 'New Hanover — Flat Iron Lake Shore',
