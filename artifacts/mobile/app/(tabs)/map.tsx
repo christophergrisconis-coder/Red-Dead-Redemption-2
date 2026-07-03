@@ -41,7 +41,9 @@ const VB_PER_PX = IMG_W / RENDER_W;
 const SHEET_HEIGHT = Math.min(Math.round(SCREEN_H * 0.58), 460);
 
 /* Build LAYERS array from LAYER_META so we have a stable ordered list */
-const ALL_LAYER_KEYS: MapCategory[] = ['towns', 'legendary', 'hideouts'];
+const ALL_LAYER_KEYS: MapCategory[] = [
+  'towns', 'legendary', 'hideouts', 'fish', 'strangers', 'collectibles', 'treasure', 'poi',
+];
 const LAYERS = ALL_LAYER_KEYS.map(key => ({ key, ...LAYER_META[key] }));
 
 /* Drawn path types */
