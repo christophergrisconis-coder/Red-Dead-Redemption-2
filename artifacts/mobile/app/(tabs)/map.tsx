@@ -1,4 +1,5 @@
 import { Feather } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import React, { useCallback, useRef, useState } from 'react';
 import {
   Animated,
@@ -18,13 +19,12 @@ import Svg, {
 } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColors } from '@/hooks/useColors';
+import { MARKERS, LAYER_META, type MapCategory, type MapPoint } from '@/data/mapData';
 
-/* Real RDR2 atlas map bundled with the app (offline-first) */
 const MAP_IMAGE = require('../../assets/images/rdr2-map.jpg');
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
 
-/* Natural pixel size of the bundled map image */
 const IMG_W = 1000;
 const IMG_H = 753;
 
@@ -33,45 +33,18 @@ const TABBAR_H = 90;
 const AVAIL_W = SCREEN_W;
 const AVAIL_H = Math.max(240, SCREEN_H - HEADER_H - TABBAR_H);
 
-/* Scale that fits the whole landscape map inside the viewport */
 const FIT = Math.min(AVAIL_W / IMG_W, AVAIL_H / IMG_H);
 const RENDER_W = IMG_W * FIT;
 const RENDER_H = IMG_H * FIT;
-/* viewBox units per rendered screen pixel at base zoom */
 const VB_PER_PX = IMG_W / RENDER_W;
 
-/* ─── Map Layers ─── */
-type LayerKey = 'towns';
+const SHEET_HEIGHT = Math.min(Math.round(SCREEN_H * 0.58), 460);
 
-const LAYERS: { key: LayerKey; label: string; color: string }[] = [
-  { key: 'towns', label: 'Towns', color: '#9B2226' },
-];
+/* Build LAYERS array from LAYER_META so we have a stable ordered list */
+const ALL_LAYER_KEYS: MapCategory[] = ['towns', 'legendary', 'hideouts'];
+const LAYERS = ALL_LAYER_KEYS.map(key => ({ key, ...LAYER_META[key] }));
 
-/* ─── Town markers, positioned on the real map (0..IMG_W / 0..IMG_H) ─── */
-interface MapPoint {
-  x: number;
-  y: number;
-  label: string;
-  type: LayerKey;
-  note?: string;
-}
-
-const MARKERS: MapPoint[] = [
-  { x: 598, y: 108, label: 'Colter', type: 'towns', note: "Ch.1 snowy start — Dutch's gang camp" },
-  { x: 566, y: 248, label: 'Valentine', type: 'towns', note: 'Ch.2 hub — saloon, doctor, stable, gunsmith' },
-  { x: 452, y: 300, label: 'Wallace Station', type: 'towns', note: 'West Elizabeth rail station' },
-  { x: 470, y: 350, label: 'Strawberry', type: 'towns', note: 'Mountain town — hotel & general store' },
-  { x: 545, y: 420, label: 'Blackwater', type: 'towns', note: 'Off-limits until the Epilogue — bounty if entered early' },
-  { x: 350, y: 527, label: 'Armadillo', type: 'towns', note: 'New Austin (Epilogue) — cholera-struck town' },
-  { x: 160, y: 568, label: 'Tumbleweed', type: 'towns', note: 'Far-west frontier town (Epilogue)' },
-  { x: 690, y: 282, label: 'Emerald Ranch', type: 'towns', note: 'Central ranch — fence & horse trading' },
-  { x: 800, y: 425, label: 'Rhodes', type: 'towns', note: 'Lemoyne — Gray vs Braithwaite feud' },
-  { x: 882, y: 405, label: 'Saint Denis', type: 'towns', note: 'Largest city — tailor, bank, theatre, trapper' },
-  { x: 912, y: 258, label: 'Van Horn', type: 'towns', note: 'Grimy eastern trading post' },
-  { x: 888, y: 188, label: 'Annesburg', type: 'towns', note: 'Northeast coal-mining town' },
-];
-
-/* ─── Drawn path helpers ─── */
+/* Drawn path types */
 interface DrawnPath {
   d: string;
   color: string;
@@ -92,12 +65,24 @@ function buildPathD(points: { x: number; y: number }[]): string {
   return d;
 }
 
-/* ─── Main Screen ─── */
+/* Category meta helpers */
+function categoryIcon(cat: MapCategory): string {
+  return LAYER_META[cat].icon;
+}
+function categoryColor(cat: MapCategory): string {
+  return LAYER_META[cat].color;
+}
+function categoryLabel(cat: MapCategory): string {
+  return LAYER_META[cat].label;
+}
+
+/* ── Main Screen ── */
 export default function MapScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
+  const router = useRouter();
 
-  const [activeLayers, setActiveLayers] = useState<Set<LayerKey>>(new Set(['towns']));
+  const [activeLayers, setActiveLayers] = useState<Set<MapCategory>>(new Set(['towns', 'legendary', 'hideouts']));
   const [drawMode, setDrawMode] = useState(false);
   const [penColor, setPenColor] = useState('#ef4444');
   const [penSize, setPenSize] = useState(4);
@@ -107,7 +92,37 @@ export default function MapScreen() {
   const [paths, setPaths] = useState<DrawnPath[]>([]);
   const currentPoints = useRef<{ x: number; y: number }[]>([]);
 
-  /* Pan / Zoom — the image is pre-fit, so base scale = 1 */
+  /* Bottom sheet animation */
+  const sheetY = useRef(new Animated.Value(SHEET_HEIGHT)).current;
+  const sheetTouchStart = useRef(0);
+
+  const openSheet = useCallback((point: MapPoint) => {
+    setSelectedPoint(point);
+    Animated.spring(sheetY, {
+      toValue: 0,
+      useNativeDriver: true,
+      friction: 9,
+      tension: 80,
+    }).start();
+  }, [sheetY]);
+
+  const closeSheet = useCallback(() => {
+    Animated.timing(sheetY, {
+      toValue: SHEET_HEIGHT,
+      duration: 220,
+      useNativeDriver: true,
+    }).start(() => setSelectedPoint(null));
+  }, [sheetY]);
+
+  const onSheetTouchStart = (e: any) => {
+    sheetTouchStart.current = e.nativeEvent.pageY;
+  };
+  const onSheetTouchEnd = (e: any) => {
+    const dy = e.nativeEvent.pageY - sheetTouchStart.current;
+    if (dy > 60) closeSheet();
+  };
+
+  /* Pan / Zoom */
   const scale = useRef(new Animated.Value(1)).current;
   const translateX = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(0)).current;
@@ -116,7 +131,7 @@ export default function MapScreen() {
 
   const topInset = Platform.OS === 'web' ? 67 : insets.top;
 
-  const toggleLayer = useCallback((key: LayerKey) => {
+  const toggleLayer = useCallback((key: MapCategory) => {
     setActiveLayers(prev => {
       const next = new Set(prev);
       if (next.has(key)) next.delete(key);
@@ -130,8 +145,6 @@ export default function MapScreen() {
 
   const panStart = useRef({ x: 0, y: 0 });
 
-  /* Touch -> viewBox coordinates. locationX/Y are in the map view's own
-     (pre-transform) coordinate space, so a single scale factor maps them. */
   const toViewBox = (locX: number, locY: number) => ({
     x: locX * VB_PER_PX,
     y: locY * VB_PER_PX,
@@ -184,7 +197,6 @@ export default function MapScreen() {
     };
   };
 
-  /* ── Zoom helpers ── */
   const zoomIn = () => {
     const next = Math.min(lastScale.current * 1.3, 5);
     lastScale.current = next;
@@ -205,9 +217,25 @@ export default function MapScreen() {
     ]).start();
   };
 
-  const visibleMarkers = MARKERS.filter(m => activeLayers.has(m.type));
+  const handleMarkerPress = useCallback((point: MapPoint) => {
+    if (selectedPoint?.label === point.label) {
+      closeSheet();
+    } else {
+      openSheet(point);
+    }
+  }, [selectedPoint, openSheet, closeSheet]);
 
-  /* ── Render ── */
+  const handleGuideNav = (point: MapPoint) => {
+    closeSheet();
+    const ref = point.guideRef;
+    if (!ref) return;
+    setTimeout(() => {
+      router.push(ref.tab as any);
+    }, 240);
+  };
+
+  const visibleMarkers = MARKERS.filter(m => activeLayers.has(m.category));
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Header */}
@@ -233,15 +261,16 @@ export default function MapScreen() {
               }]}
             >
               <Feather name="edit-2" size={15} color={drawMode ? '#fff' : colors.mutedForeground} />
-              <Text style={[styles.drawToggleText, { color: drawMode ? '#fff' : colors.mutedForeground }]}>
-                Draw
-              </Text>
+              <Text style={[styles.drawToggleText, { color: drawMode ? '#fff' : colors.mutedForeground }]}>Draw</Text>
             </Pressable>
             <Pressable
               onPress={() => { setShowLayerPanel(v => !v); setShowColorPicker(false); }}
-              style={[styles.iconBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
+              style={[styles.iconBtn, {
+                backgroundColor: showLayerPanel ? colors.primary + '22' : colors.card,
+                borderColor: showLayerPanel ? colors.primary : colors.border,
+              }]}
             >
-              <Feather name="layers" size={16} color={colors.foreground} />
+              <Feather name="layers" size={16} color={showLayerPanel ? colors.primary : colors.foreground} />
             </Pressable>
           </View>
         </View>
@@ -256,39 +285,41 @@ export default function MapScreen() {
           style={{
             width: RENDER_W,
             height: RENDER_H,
-            transform: [
-              { translateX },
-              { translateY },
-              { scale },
-            ],
+            transform: [{ translateX }, { translateY }, { scale }],
           }}
         >
           <Svg width={RENDER_W} height={RENDER_H} viewBox={`0 0 ${IMG_W} ${IMG_H}`}>
             <SvgImage
-              x={0}
-              y={0}
-              width={IMG_W}
-              height={IMG_H}
+              x={0} y={0}
+              width={IMG_W} height={IMG_H}
               href={MAP_IMAGE}
               preserveAspectRatio="xMidYMid meet"
             />
 
-            {/* Town markers */}
+            {/* Markers */}
             {visibleMarkers.map((m, i) => {
-              const layerColor = LAYERS.find(l => l.key === m.type)?.color || '#9B2226';
+              const markerColor = categoryColor(m.category);
+              const isSelected = selectedPoint?.label === m.label;
               return (
                 <G key={`${m.label}-${i}`}>
+                  {/* Selected outer glow ring */}
+                  {isSelected && (
+                    <>
+                      <Circle cx={m.x} cy={m.y} r={20} fill={markerColor} opacity={0.2} />
+                      <Circle cx={m.x} cy={m.y} r={15} fill="none" stroke={markerColor} strokeWidth={2.5} opacity={0.9} />
+                    </>
+                  )}
+                  {/* Invisible hit area */}
                   {!drawMode && (
                     <Circle
-                      cx={m.x}
-                      cy={m.y}
-                      r={18}
+                      cx={m.x} cy={m.y} r={18}
                       fill="transparent"
-                      onPress={() => setSelectedPoint(m)}
+                      onPress={() => handleMarkerPress(m)}
                     />
                   )}
-                  <Circle cx={m.x} cy={m.y} r={9} fill="#FBF3DD" opacity={0.95} />
-                  <Circle cx={m.x} cy={m.y} r={6.5} fill={layerColor} />
+                  {/* Marker body */}
+                  <Circle cx={m.x} cy={m.y} r={9} fill="#FBF3DD" opacity={isSelected ? 1 : 0.95} />
+                  <Circle cx={m.x} cy={m.y} r={6.5} fill={isSelected ? lighten(markerColor) : markerColor} />
                   <Circle cx={m.x} cy={m.y} r={2.5} fill="#FBF3DD" />
                 </G>
               );
@@ -329,7 +360,7 @@ export default function MapScreen() {
       {showLayerPanel && (
         <View style={[styles.layerPanel, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <Text style={[styles.panelTitle, { color: colors.foreground }]}>Map Layers</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.layerList}>
+          <View style={styles.layerList}>
             {LAYERS.map(layer => {
               const active = activeLayers.has(layer.key);
               return (
@@ -337,18 +368,22 @@ export default function MapScreen() {
                   key={layer.key}
                   onPress={() => toggleLayer(layer.key)}
                   style={[styles.layerChip, {
-                    backgroundColor: active ? layer.color + '25' : colors.background,
+                    backgroundColor: active ? layer.color + '22' : colors.background,
                     borderColor: active ? layer.color : colors.border,
                   }]}
                 >
-                  <View style={[styles.layerDot, { backgroundColor: layer.color }]} />
+                  <Feather
+                    name={layer.icon as any}
+                    size={12}
+                    color={active ? layer.color : colors.mutedForeground}
+                  />
                   <Text style={[styles.layerLabel, { color: active ? layer.color : colors.mutedForeground }]}>
                     {layer.label}
                   </Text>
                 </Pressable>
               );
             })}
-          </ScrollView>
+          </View>
         </View>
       )}
 
@@ -394,26 +429,152 @@ export default function MapScreen() {
         </View>
       )}
 
-      {/* Selected Point Detail */}
+      {/* Bottom Sheet Backdrop */}
       {selectedPoint && (
-        <Pressable onPress={() => setSelectedPoint(null)} style={styles.detailOverlay}>
-          <View style={[styles.detailCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <Text style={[styles.detailTitle, { color: colors.foreground }]}>{selectedPoint.label}</Text>
-            {selectedPoint.note && (
-              <Text style={[styles.detailNote, { color: colors.mutedForeground }]}>{selectedPoint.note}</Text>
-            )}
-            <Text style={[styles.detailType, { color: LAYERS.find(l => l.key === selectedPoint.type)?.color }]}>
-              {LAYERS.find(l => l.key === selectedPoint.type)?.label}
-            </Text>
-          </View>
-        </Pressable>
+        <Pressable
+          style={styles.sheetBackdrop}
+          onPress={closeSheet}
+        />
       )}
+
+      {/* Bottom Sheet */}
+      <Animated.View
+        style={[
+          styles.sheet,
+          { backgroundColor: colors.card, borderColor: colors.border },
+          { transform: [{ translateY: sheetY }] },
+        ]}
+        onTouchStart={onSheetTouchStart}
+        onTouchEnd={onSheetTouchEnd}
+      >
+        {selectedPoint && (
+          <SheetContent
+            point={selectedPoint}
+            colors={colors}
+            onClose={closeSheet}
+            onGuideNav={handleGuideNav}
+          />
+        )}
+      </Animated.View>
     </View>
+  );
+}
+
+/* Lighten a hex color slightly for the selected state fill */
+function lighten(hex: string): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  const lr = Math.min(255, r + 55);
+  const lg = Math.min(255, g + 55);
+  const lb = Math.min(255, b + 55);
+  return `#${lr.toString(16).padStart(2, '0')}${lg.toString(16).padStart(2, '0')}${lb.toString(16).padStart(2, '0')}`;
+}
+
+/* ── Bottom Sheet Content Component ── */
+interface SheetContentProps {
+  point: MapPoint;
+  colors: ReturnType<typeof import('@/hooks/useColors').useColors>;
+  onClose: () => void;
+  onGuideNav: (point: MapPoint) => void;
+}
+
+function SheetContent({ point, colors, onClose, onGuideNav }: SheetContentProps) {
+  const markerColor = categoryColor(point.category);
+  const markerLabel = categoryLabel(point.category);
+  const markerIcon = categoryIcon(point.category);
+
+  return (
+    <>
+      {/* Drag handle */}
+      <View style={styles.dragHandle}>
+        <View style={[styles.dragBar, { backgroundColor: colors.border }]} />
+        <Pressable onPress={onClose} style={styles.closeBtn} hitSlop={12}>
+          <Feather name="x" size={18} color={colors.mutedForeground} />
+        </Pressable>
+      </View>
+
+      <ScrollView
+        style={styles.sheetScroll}
+        contentContainerStyle={styles.sheetScrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Header row */}
+        <View style={styles.sheetHeader}>
+          <View style={styles.sheetTitleRow}>
+            <Text style={[styles.sheetTitle, { color: colors.foreground }]} numberOfLines={2}>
+              {point.label}
+            </Text>
+            {/* Category pill */}
+            <View style={[styles.categoryPill, { backgroundColor: markerColor + '22', borderColor: markerColor + '66' }]}>
+              <Feather name={markerIcon as any} size={11} color={markerColor} />
+              <Text style={[styles.categoryPillText, { color: markerColor }]}>{markerLabel}</Text>
+            </View>
+          </View>
+          {/* Region badge */}
+          <View style={[styles.regionBadge, { backgroundColor: colors.secondary }]}>
+            <Feather name="map-pin" size={11} color={colors.mutedForeground} />
+            <Text style={[styles.regionText, { color: colors.mutedForeground }]}>{point.region}</Text>
+          </View>
+        </View>
+
+        {/* Chapter note */}
+        {point.chapter && (
+          <View style={[styles.chapterRow, { borderLeftColor: markerColor, backgroundColor: markerColor + '12' }]}>
+            <Feather name="book-open" size={13} color={markerColor} />
+            <Text style={[styles.chapterText, { color: colors.foreground }]}>{point.chapter}</Text>
+          </View>
+        )}
+
+        {/* Description */}
+        <Text style={[styles.sheetDescription, { color: colors.foreground }]}>
+          {point.description}
+        </Text>
+
+        {/* Services list (towns only) */}
+        {point.services && point.services.length > 0 && (
+          <View style={styles.servicesSection}>
+            <Text style={[styles.servicesTitle, { color: colors.mutedForeground }]}>Services & Facilities</Text>
+            <View style={styles.servicesPills}>
+              {point.services.map(svc => (
+                <View key={svc} style={[styles.servicePill, { backgroundColor: colors.secondary, borderColor: colors.border }]}>
+                  <Text style={[styles.servicePillText, { color: colors.foreground }]}>{svc}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
+
+        {/* Tip */}
+        {point.tip && (
+          <View style={[styles.tipRow, { backgroundColor: colors.primary + '12', borderColor: colors.primary + '44' }]}>
+            <Feather name="star" size={13} color={colors.primary} style={{ marginTop: 2 }} />
+            <Text style={[styles.tipText, { color: colors.foreground }]}>{point.tip}</Text>
+          </View>
+        )}
+
+        {/* View in Guide button */}
+        {point.guideRef && (
+          <Pressable
+            onPress={() => onGuideNav(point)}
+            style={({ pressed }) => [
+              styles.guideBtn,
+              { backgroundColor: pressed ? markerColor + 'CC' : markerColor },
+            ]}
+          >
+            <Feather name="book" size={15} color="#FBF3DD" />
+            <Text style={styles.guideBtnText}>{point.guideRef.label}</Text>
+            <Feather name="chevron-right" size={15} color="#FBF3DD" />
+          </Pressable>
+        )}
+      </ScrollView>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+
   header: {
     paddingHorizontal: 16,
     paddingBottom: 10,
@@ -437,6 +598,7 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 1.5,
   },
+
   mapViewport: {
     flex: 1,
     overflow: 'hidden',
@@ -444,6 +606,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#2A1F15',
   },
+
   drawToggle: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -465,6 +628,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+
   zoomBar: {
     position: 'absolute',
     right: 16,
@@ -490,6 +654,7 @@ const styles = StyleSheet.create({
     width: 24,
     alignSelf: 'center',
   },
+
   layerPanel: {
     position: 'absolute',
     top: 80,
@@ -497,24 +662,25 @@ const styles = StyleSheet.create({
     right: 16,
     borderRadius: 14,
     borderWidth: 1,
-    padding: 12,
+    padding: 14,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.25,
     shadowRadius: 8,
     elevation: 6,
+    zIndex: 20,
   },
   panelTitle: {
-    fontSize: 14,
+    fontSize: 11,
     fontFamily: 'Inter_700Bold',
     textTransform: 'uppercase',
-    letterSpacing: 1,
+    letterSpacing: 1.2,
     marginBottom: 10,
   },
   layerList: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 8,
-    paddingRight: 8,
   },
   layerChip: {
     flexDirection: 'row',
@@ -525,15 +691,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1.5,
   },
-  layerDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
   layerLabel: {
     fontSize: 12,
     fontFamily: 'Inter_600SemiBold',
   },
+
   penToolbar: {
     position: 'absolute',
     bottom: 108,
@@ -583,40 +745,186 @@ const styles = StyleSheet.create({
     height: 32,
     borderRadius: 16,
   },
-  detailOverlay: {
+
+  /* Bottom Sheet */
+  sheetBackdrop: {
     ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    zIndex: 30,
+  },
+  sheet: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: TABBAR_H,
+    height: SHEET_HEIGHT,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    borderWidth: 1,
+    borderBottomWidth: 0,
+    zIndex: 40,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 14,
+    elevation: 16,
+  },
+  dragHandle: {
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    zIndex: 50,
+    paddingTop: 10,
+    paddingBottom: 6,
+    paddingHorizontal: 16,
+    position: 'relative',
   },
-  detailCard: {
-    borderRadius: 16,
-    borderWidth: 1,
-    padding: 20,
-    minWidth: 260,
-    maxWidth: SCREEN_W - 48,
-    gap: 6,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    elevation: 10,
+  dragBar: {
+    width: 40,
+    height: 4,
+    borderRadius: 2,
   },
-  detailTitle: {
-    fontSize: 17,
+  closeBtn: {
+    position: 'absolute',
+    right: 16,
+    top: 8,
+    padding: 4,
+  },
+
+  sheetScroll: {
+    flex: 1,
+  },
+  sheetScrollContent: {
+    paddingHorizontal: 18,
+    paddingBottom: 20,
+    gap: 12,
+  },
+
+  sheetHeader: {
+    gap: 8,
+    marginTop: 4,
+  },
+  sheetTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: 10,
+  },
+  sheetTitle: {
+    flex: 1,
+    fontSize: 20,
     fontFamily: 'Inter_700Bold',
+    lineHeight: 26,
   },
-  detailNote: {
-    fontSize: 13,
-    fontFamily: 'Inter_400Regular',
-    lineHeight: 18,
+
+  categoryPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 12,
+    borderWidth: 1,
+    marginTop: 2,
   },
-  detailType: {
-    fontSize: 12,
+  categoryPillText: {
+    fontSize: 11,
     fontFamily: 'Inter_600SemiBold',
     textTransform: 'uppercase',
-    letterSpacing: 1,
+    letterSpacing: 0.5,
+  },
+
+  regionBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+    alignSelf: 'flex-start',
+  },
+  regionText: {
+    fontSize: 12,
+    fontFamily: 'Inter_400Regular',
+  },
+
+  chapterRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    borderLeftWidth: 3,
+    paddingLeft: 10,
+    paddingVertical: 7,
+    paddingRight: 10,
+    borderRadius: 4,
+  },
+  chapterText: {
+    fontSize: 13,
+    fontFamily: 'Inter_600SemiBold',
+    flex: 1,
+  },
+
+  sheetDescription: {
+    fontSize: 14,
+    fontFamily: 'Inter_400Regular',
+    lineHeight: 21,
+  },
+
+  servicesSection: {
+    gap: 8,
+  },
+  servicesTitle: {
+    fontSize: 11,
+    fontFamily: 'Inter_700Bold',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+  },
+  servicesPills: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
+  },
+  servicePill: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  servicePillText: {
+    fontSize: 12,
+    fontFamily: 'Inter_400Regular',
+  },
+
+  tipRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+    borderRadius: 10,
+    borderWidth: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  tipText: {
+    flex: 1,
+    fontSize: 13,
+    fontFamily: 'Inter_400Regular',
+    lineHeight: 19,
+    fontStyle: 'italic',
+  },
+
+  guideBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 13,
+    borderRadius: 12,
     marginTop: 4,
+  },
+  guideBtnText: {
+    color: '#FBF3DD',
+    fontSize: 14,
+    fontFamily: 'Inter_700Bold',
+    flex: 1,
+    textAlign: 'center',
   },
 });

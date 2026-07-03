@@ -1,2 +1,4 @@
 - [Mobile screenshot verification gate](mobile-screenshot-verification.md) — the WelcomeScene intro overlay blocks screenshots of inner routes; temporarily disable it in `_layout.tsx`, screenshot, then revert.
 - [Expo Go tunnel mode in Replit](expo-go-tunnel.md) — use --localhost + Replit proxy (never --tunnel/ngrok, it crashes); REACT_NATIVE_PACKAGER_HOSTNAME must be $REPLIT_EXPO_DEV_DOMAIN.
+- [SVG selected-state animation](svg-animated-state.md) — avoid animated SVG primitives inside react-native-svg without createAnimatedComponent; use static outer-ring circles for selected markers instead of pulsing animations.
+- [Map marker atlas coords](map-marker-positions.md) — town marker coords are original/eyeballed; legendary animal and hideout coords in mapData.ts are approximate and need a verification pass.
