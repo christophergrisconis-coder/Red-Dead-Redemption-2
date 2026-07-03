@@ -1,1 +1,2 @@
 - [Mobile screenshot verification gate](mobile-screenshot-verification.md) — the WelcomeScene intro overlay blocks screenshots of inner routes; temporarily disable it in `_layout.tsx`, screenshot, then revert.
+- [Expo Go tunnel mode in Replit](expo-go-tunnel.md) — use --localhost + Replit proxy (never --tunnel/ngrok, it crashes); REACT_NATIVE_PACKAGER_HOSTNAME must be $REPLIT_EXPO_DEV_DOMAIN.
