@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import {
   Animated,
   Dimensions,
@@ -9,6 +9,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from 'react-native';
 import Svg, {
@@ -28,7 +29,7 @@ const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
 const IMG_W = 1000;
 const IMG_H = 753;
 
-const HEADER_H = 110;
+const HEADER_H = 155;
 const TABBAR_H = 90;
 const AVAIL_W = SCREEN_W;
 const AVAIL_H = Math.max(240, SCREEN_H - HEADER_H - TABBAR_H);
@@ -92,7 +93,17 @@ export default function MapScreen() {
   const [showLayerPanel, setShowLayerPanel] = useState(false);
   const [selectedPoint, setSelectedPoint] = useState<MapPoint | null>(null);
   const [paths, setPaths] = useState<DrawnPath[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const currentPoints = useRef<{ x: number; y: number }[]>([]);
+
+  /* Search results — searches all markers (any layer) by label */
+  const searchResults = useMemo<MapPoint[]>(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return [];
+    return MARKERS.filter(m => m.label.toLowerCase().includes(q)).slice(0, 8);
+  }, [searchQuery]);
+
+  const showResults = searchResults.length > 0;
 
   /* Bottom sheet animation */
   const sheetY = useRef(new Animated.Value(SHEET_HEIGHT)).current;
@@ -151,6 +162,37 @@ export default function MapScreen() {
     x: locX * VB_PER_PX,
     y: locY * VB_PER_PX,
   });
+
+  /* Pan to a specific map point, zooming in */
+  const panToMarker = useCallback((point: MapPoint) => {
+    const s = 2.5;
+    const px = (point.x / IMG_W) * RENDER_W;
+    const py = (point.y / IMG_H) * RENDER_H;
+    const tx = s * (RENDER_W / 2 - px);
+    const ty = s * (RENDER_H / 2 - py);
+
+    lastScale.current = s;
+    lastTranslate.current = { x: tx, y: ty };
+
+    Animated.parallel([
+      Animated.spring(scale, { toValue: s, useNativeDriver: true, friction: 8, tension: 50 }),
+      Animated.spring(translateX, { toValue: tx, useNativeDriver: true, friction: 8, tension: 50 }),
+      Animated.spring(translateY, { toValue: ty, useNativeDriver: true, friction: 8, tension: 50 }),
+    ]).start();
+  }, [scale, translateX, translateY]);
+
+  /* Select a search result: enable its layer, pan to it, open detail */
+  const handleSearchSelect = useCallback((point: MapPoint) => {
+    setSearchQuery('');
+    setActiveLayers(prev => {
+      if (prev.has(point.category)) return prev;
+      const next = new Set(prev);
+      next.add(point.category);
+      return next;
+    });
+    panToMarker(point);
+    openSheet(point);
+  }, [panToMarker, openSheet]);
 
   const onTouchStart = (e: any) => {
     const ne = e.nativeEvent;
@@ -280,7 +322,71 @@ export default function MapScreen() {
             </Pressable>
           </View>
         </View>
+
+        {/* Search row */}
+        <View style={[styles.searchRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <Feather name="search" size={15} color={colors.mutedForeground} style={styles.searchIcon} />
+          <TextInput
+            style={[styles.searchInput, { color: colors.foreground }]}
+            placeholder="Search locations…"
+            placeholderTextColor={colors.mutedForeground}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            returnKeyType="search"
+            autoCorrect={false}
+            autoCapitalize="none"
+            onFocus={() => { setShowLayerPanel(false); setShowColorPicker(false); }}
+          />
+          {searchQuery.length > 0 && (
+            <Pressable onPress={() => setSearchQuery('')} hitSlop={8} style={styles.searchClear}>
+              <Feather name="x-circle" size={16} color={colors.mutedForeground} />
+            </Pressable>
+          )}
+        </View>
       </View>
+
+      {/* Search Results Dropdown */}
+      {showResults && (
+        <View style={[styles.searchDropdown, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <ScrollView
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            {searchResults.map((m, i) => {
+              const color = categoryColor(m.category);
+              const icon = categoryIcon(m.category);
+              const label = categoryLabel(m.category);
+              return (
+                <Pressable
+                  key={`${m.label}-${i}`}
+                  onPress={() => handleSearchSelect(m)}
+                  style={({ pressed }) => [
+                    styles.searchResultRow,
+                    { borderBottomColor: colors.border },
+                    pressed && { backgroundColor: colors.secondary },
+                    i === searchResults.length - 1 && { borderBottomWidth: 0 },
+                  ]}
+                >
+                  <View style={[styles.resultDot, { backgroundColor: color }]} />
+                  <View style={styles.resultTextBlock}>
+                    <Text style={[styles.resultLabel, { color: colors.foreground }]} numberOfLines={1}>
+                      {m.label}
+                    </Text>
+                    <View style={styles.resultMeta}>
+                      <Feather name={icon as any} size={10} color={color} />
+                      <Text style={[styles.resultCategory, { color }]}>{label}</Text>
+                      <Text style={[styles.resultRegion, { color: colors.mutedForeground }]} numberOfLines={1}>
+                        · {m.region}
+                      </Text>
+                    </View>
+                  </View>
+                  <Feather name="map-pin" size={13} color={colors.mutedForeground} />
+                </Pressable>
+              );
+            })}
+          </ScrollView>
+        </View>
+      )}
 
       {/* Map Viewport */}
       <View style={styles.mapViewport}>
@@ -605,6 +711,80 @@ const styles = StyleSheet.create({
     letterSpacing: 1.5,
   },
 
+  /* Search */
+  searchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 22,
+    borderWidth: 1,
+    paddingHorizontal: 12,
+    height: 40,
+  },
+  searchIcon: {
+    marginRight: 8,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 14,
+    fontFamily: 'Inter_400Regular',
+    paddingVertical: 0,
+  },
+  searchClear: {
+    paddingLeft: 8,
+  },
+  searchDropdown: {
+    position: 'absolute',
+    top: HEADER_H,
+    left: 12,
+    right: 12,
+    borderRadius: 14,
+    borderWidth: 1,
+    maxHeight: 300,
+    zIndex: 50,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 12,
+    elevation: 10,
+    overflow: 'hidden',
+  },
+  searchResultRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 14,
+    paddingVertical: 11,
+    gap: 12,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  resultDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    flexShrink: 0,
+  },
+  resultTextBlock: {
+    flex: 1,
+    gap: 2,
+  },
+  resultLabel: {
+    fontSize: 14,
+    fontFamily: 'Inter_600SemiBold',
+  },
+  resultMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  resultCategory: {
+    fontSize: 11,
+    fontFamily: 'Inter_600SemiBold',
+  },
+  resultRegion: {
+    fontSize: 11,
+    fontFamily: 'Inter_400Regular',
+    flex: 1,
+  },
+
   mapViewport: {
     flex: 1,
     overflow: 'hidden',
@@ -638,7 +818,7 @@ const styles = StyleSheet.create({
   zoomBar: {
     position: 'absolute',
     right: 16,
-    top: 120,
+    top: HEADER_H + 10,
     width: 40,
     borderRadius: 12,
     borderWidth: 1,
@@ -663,7 +843,7 @@ const styles = StyleSheet.create({
 
   layerPanel: {
     position: 'absolute',
-    top: 80,
+    top: HEADER_H,
     left: 16,
     right: 16,
     borderRadius: 14,
@@ -801,13 +981,12 @@ const styles = StyleSheet.create({
   },
   sheetScrollContent: {
     paddingHorizontal: 18,
-    paddingBottom: 20,
+    paddingBottom: 24,
     gap: 12,
   },
 
   sheetHeader: {
     gap: 8,
-    marginTop: 4,
   },
   sheetTitleRow: {
     flexDirection: 'row',
@@ -816,29 +995,26 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   sheetTitle: {
-    flex: 1,
-    fontSize: 20,
+    fontSize: 19,
     fontFamily: 'Inter_700Bold',
+    flex: 1,
     lineHeight: 26,
   },
-
   categoryPill: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
     paddingHorizontal: 10,
     paddingVertical: 5,
-    borderRadius: 12,
+    borderRadius: 20,
     borderWidth: 1,
+    flexShrink: 0,
     marginTop: 2,
   },
   categoryPillText: {
     fontSize: 11,
     fontFamily: 'Inter_600SemiBold',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
   },
-
   regionBadge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -859,8 +1035,8 @@ const styles = StyleSheet.create({
     gap: 8,
     borderLeftWidth: 3,
     paddingLeft: 10,
-    paddingVertical: 7,
-    paddingRight: 10,
+    paddingVertical: 8,
+    paddingRight: 12,
     borderRadius: 4,
   },
   chapterText: {
@@ -891,7 +1067,7 @@ const styles = StyleSheet.create({
   },
   servicePill: {
     paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingVertical: 5,
     borderRadius: 8,
     borderWidth: 1,
   },
@@ -902,19 +1078,16 @@ const styles = StyleSheet.create({
 
   tipRow: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 8,
+    gap: 10,
     borderRadius: 10,
     borderWidth: 1,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    padding: 12,
   },
   tipText: {
-    flex: 1,
     fontSize: 13,
     fontFamily: 'Inter_400Regular',
-    lineHeight: 19,
-    fontStyle: 'italic',
+    lineHeight: 20,
+    flex: 1,
   },
 
   guideBtn: {
@@ -927,10 +1100,8 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   guideBtnText: {
-    color: '#FBF3DD',
     fontSize: 14,
     fontFamily: 'Inter_700Bold',
-    flex: 1,
-    textAlign: 'center',
+    color: '#FBF3DD',
   },
 });
