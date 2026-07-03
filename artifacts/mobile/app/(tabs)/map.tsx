@@ -551,6 +551,7 @@ export default function MapScreen() {
 
       {/* Bottom Sheet */}
       <Animated.View
+        pointerEvents={selectedPoint ? 'auto' : 'none'}
         style={[
           styles.sheet,
           { backgroundColor: colors.card, borderColor: colors.border },
